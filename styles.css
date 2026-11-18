@@ -168,3 +168,17 @@ body.home-active .footer { flex: 0 0 auto; margin-top: 10px; padding-top: 8px; f
 @keyframes blockClearBurst{0%{transform:scale(1);opacity:1;filter:brightness(1.1)}28%{transform:scale(1.16);opacity:1;filter:brightness(2.2)}65%{transform:scale(.82);opacity:.85;filter:brightness(1.8)}100%{transform:scale(.15);opacity:0;filter:brightness(2.5)}}
 @keyframes blockClearFlash{0%{opacity:0;transform:scale(.3)}30%{opacity:.9;transform:scale(1.15)}100%{opacity:0;transform:scale(1.7)}}
 @media(prefers-reduced-motion:reduce){.block-cell.clearing,.block-cell.clearing::after{animation:none!important;opacity:0}}
+
+
+/* WIN / LOSE MOMENTS */
+.modal-backdrop.result-win::before,.modal-backdrop.result-lose::before{content:"";position:absolute;inset:0;pointer-events:none}
+.modal-backdrop.result-win::before{background:radial-gradient(circle at 12% 24%,#ffe58c 0 2px,transparent 3px),radial-gradient(circle at 82% 18%,#7deeff 0 2px,transparent 3px),radial-gradient(circle at 22% 76%,#d99aff 0 3px,transparent 4px),radial-gradient(circle at 88% 72%,#ffe58c 0 2px,transparent 3px),radial-gradient(circle at 50% 10%,#fff 0 1px,transparent 3px);animation:resultSparkle 1.8s ease-in-out infinite alternate}
+.modal-backdrop.result-win .dialog{border-color:#d4b0ffb8;box-shadow:0 20px 90px #000b,0 0 24px #a56bff55,0 0 65px #f3c66d20;animation:winDialogEnter .55s cubic-bezier(.18,.9,.25,1.2) both}
+.modal-backdrop.result-win .dialog h2{color:#fff4c4;text-shadow:0 0 18px #ffc85d66}
+.modal-backdrop.result-lose::before{background:radial-gradient(ellipse at 50% 45%,#ff526d12,transparent 58%)}
+.modal-backdrop.result-lose .dialog{border-color:#ff789455;box-shadow:0 20px 90px #000b,0 0 35px #ff526d18;animation:loseDialogEnter .42s ease-out both}
+.modal-backdrop.result-lose .dialog h2{color:#ffd5df}
+@keyframes winDialogEnter{0%{opacity:0;transform:translateY(18px) scale(.88)}70%{opacity:1;transform:translateY(-3px) scale(1.025)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes loseDialogEnter{0%{opacity:0;transform:translateY(12px) scale(.96)}65%{opacity:1;transform:translateX(-3px) scale(1)}82%{transform:translateX(3px)}100%{opacity:1;transform:translateX(0)}}
+@keyframes resultSparkle{from{filter:brightness(.8);transform:scale(1)}to{filter:brightness(1.35);transform:scale(1.015)}}
+@media(prefers-reduced-motion:reduce){.modal-backdrop.result-win::before,.modal-backdrop.result-lose::before,.modal-backdrop.result-win .dialog,.modal-backdrop.result-lose .dialog{animation:none!important}}
