@@ -30,13 +30,13 @@ function startAmbient(){
  try{
   const ctx=ensureAudio(),now=ctx.currentTime;
   ambientActive=true;
-  [[130.81,.010],[196,.008],[261.63,.005]].forEach(([frequency,volume],index)=>{
+  [[130.81,.026],[196,.019],[261.63,.012],[392,.006]].forEach(([frequency,volume],index)=>{
    const osc=ctx.createOscillator(),gain=ctx.createGain();
    osc.type="sine";
    osc.frequency.setValueAtTime(frequency,now);
-   osc.detune.setValueAtTime(index===1?3:index===2?-4:0,now);
+   osc.detune.setValueAtTime(index===1?3:index===2?-4:2,now);
    gain.gain.setValueAtTime(.0001,now);
-   gain.gain.setTargetAtTime(volume,now+index*.22,1.1);
+   gain.gain.setTargetAtTime(volume,now+index*.18,.75);
    osc.connect(gain);gain.connect(ctx.destination);osc.start(now);
    ambientNodes.push({osc,gain});
   });
@@ -116,6 +116,7 @@ function endBlocks(){best=Math.max(best,score);showModal("پایان بازی","
 function restart(){showModal("شروع دوباره","از اول شروع کنیم؟","پیشرفت همین مرحله پاک می‌شود.",[{label:"بله، شروع دوباره",primary:true,action:()=>startGame(mode)},{label:"ادامه بازی"}]);}
 function hint(){if(mode==="liquid"){liquidHint();return;}if(selectedPiece===null){const i=block.pieces.findIndex(p=>!p.used);if(i>=0)selectPiece(i);}if(selectedPiece!==null){const p=block.pieces[selectedPiece];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(BlockEngine.fits(block.board,p.shape,r,c)){setMessage("راهنما: قطعه انتخاب‌شده در ردیف "+fa(r+1)+"، ستون "+fa(c+1)+" جا می‌شود.");return;}}setMessage("برای این قطعه جای خالی مناسبی نیست.");}
 function settings(){showModal("تنظیمات","تنظیمات بازی","صدا را می‌توانی از دکمه بالای صفحه روشن یا خاموش کنی.",[{label:"متوجه شدم",primary:true}]);}
+document.addEventListener("pointerdown",()=>{if(document.body.classList.contains("home-active"))startAmbient();},{passive:true});
 $("#play-button").addEventListener("click",()=>{startAmbient();showModal("انتخاب مسیر","اولین چالش تو","کدام معما را می‌خواهی حل کنی؟",[{label:"مرتب‌سازی رنگ",primary:true,action:()=>startGame("liquid")},{label:"پازل بلوکی",action:()=>startGame("blocks")} ]);});
 $("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();if(state.get().sound){sound(600);startAmbient();}else stopAmbient();});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});document.body.classList.add("home-active");state.subscribe(renderHeader);renderHeader();
 })();
