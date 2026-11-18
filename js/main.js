@@ -26,7 +26,7 @@ function stopAmbient(){
  ambientNodes=[];
 }
 function startAmbient(){
- if(!state.get().sound||!document.body.classList.contains("home-active")||ambientActive)return;
+ if(!state.get().sound||(!document.body.classList.contains("home-active")&&!document.body.classList.contains("game-active"))||ambientActive)return;
  try{
   const ctx=ensureAudio(),now=ctx.currentTime;
   ambientActive=true;
@@ -73,7 +73,7 @@ function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;$
 function setMessage(t){$("#game-message").textContent=t;}
 function closeModal(){modal.hidden=true;modal.classList.remove("result-win","result-lose");}
 function showModal(kicker,title,description,buttons,resultType=""){modal.classList.remove("result-win","result-lose");if(resultType)modal.classList.add("result-"+resultType);$("#dialog-kicker").textContent=kicker;$("#dialog-title").textContent=title;$("#dialog-description").textContent=description;const actions=$("#dialog-actions");actions.innerHTML="";buttons.forEach(b=>{const el=document.createElement("button");el.className=b.primary?"primary-button":"secondary-button";el.textContent=b.label;el.addEventListener("click",()=>{closeModal();if(b.action)b.action();});actions.append(el);});modal.hidden=false;}
-function startGame(which){stopAmbient();document.body.classList.remove("home-active");document.body.classList.add("game-active");mode=which;level=state.get().level;home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sfx("start");}
+function startGame(which){document.body.classList.remove("home-active");document.body.classList.add("game-active");mode=which;level=state.get().level;home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sfx("start");}
 function backHome(){document.body.classList.remove("game-active");document.body.classList.add("home-active");game.hidden=true;home.hidden=false;mode=null;closeModal();startAmbient();}
 function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").textContent=fa(moves);$("#best-value").textContent=fa(best);}
 function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
