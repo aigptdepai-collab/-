@@ -5,7 +5,43 @@ const $=s=>document.querySelector(s),state=window.ChromaState;
 const home=$("#home-screen"),game=$("#game-screen"),liquidBoard=$("#liquid-board"),blockWrap=$("#block-board-wrap"),blockBoard=$("#block-board"),tray=$("#piece-tray"),modal=$("#modal-backdrop");
 const fa=n=>String(n).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 let mode=null,level=1,score=0,moves=0,best=0,selectedTube=null,selectedPiece=null,liquid=[],block=null,history=[],pourAnimating=false,blockAnimating=false;
-let audioContext=null;
+let audioContext=null,ambientNodes=[],ambientActive=false;
+function ensureAudio(){
+ audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+ if(audioContext.state==="suspended")audioContext.resume();
+ return audioContext;
+}
+function stopAmbient(){
+ if(!ambientActive)return;
+ ambientActive=false;
+ if(!audioContext)return;
+ const now=audioContext.currentTime;
+ ambientNodes.forEach(node=>{
+  try{
+   node.gain.gain.cancelScheduledValues(now);
+   node.gain.gain.setTargetAtTime(.0001,now,.35);
+   node.osc.stop(now+1.5);
+  }catch(e){}
+ });
+ ambientNodes=[];
+}
+function startAmbient(){
+ if(!state.get().sound||!document.body.classList.contains("home-active")||ambientActive)return;
+ try{
+  const ctx=ensureAudio(),now=ctx.currentTime;
+  ambientActive=true;
+  [[130.81,.010],[196,.008],[261.63,.005]].forEach(([frequency,volume],index)=>{
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.type="sine";
+   osc.frequency.setValueAtTime(frequency,now);
+   osc.detune.setValueAtTime(index===1?3:index===2?-4:0,now);
+   gain.gain.setValueAtTime(.0001,now);
+   gain.gain.setTargetAtTime(volume,now+index*.22,1.1);
+   osc.connect(gain);gain.connect(ctx.destination);osc.start(now);
+   ambientNodes.push({osc,gain});
+  });
+ }catch(e){ambientActive=false;}
+}
 function tone(freq,duration=.09,when=0,wave="sine",volume=.035){
  if(!state.get().sound)return;
  try{
@@ -37,8 +73,8 @@ function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;$
 function setMessage(t){$("#game-message").textContent=t;}
 function closeModal(){modal.hidden=true;modal.classList.remove("result-win","result-lose");}
 function showModal(kicker,title,description,buttons,resultType=""){modal.classList.remove("result-win","result-lose");if(resultType)modal.classList.add("result-"+resultType);$("#dialog-kicker").textContent=kicker;$("#dialog-title").textContent=title;$("#dialog-description").textContent=description;const actions=$("#dialog-actions");actions.innerHTML="";buttons.forEach(b=>{const el=document.createElement("button");el.className=b.primary?"primary-button":"secondary-button";el.textContent=b.label;el.addEventListener("click",()=>{closeModal();if(b.action)b.action();});actions.append(el);});modal.hidden=false;}
-function startGame(which){document.body.classList.remove("home-active");document.body.classList.add("game-active");mode=which;level=state.get().level;home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sfx("start");}
-function backHome(){document.body.classList.remove("game-active");document.body.classList.add("home-active");game.hidden=true;home.hidden=false;mode=null;closeModal();}
+function startGame(which){stopAmbient();document.body.classList.remove("home-active");document.body.classList.add("game-active");mode=which;level=state.get().level;home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sfx("start");}
+function backHome(){document.body.classList.remove("game-active");document.body.classList.add("home-active");game.hidden=true;home.hidden=false;mode=null;closeModal();startAmbient();}
 function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").textContent=fa(moves);$("#best-value").textContent=fa(best);}
 function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
 function undo(){const h=history.pop();if(!h){setMessage("هنوز حرکتی برای برگشت وجود ندارد.");return;}score=h.score;moves=h.moves;if(h.mode==="liquid"){liquid=LiquidEngine.clone(h.tubes);selectedTube=null;renderLiquid();}else{block={board:BlockEngine.clone(h.board),pieces:h.pieces};selectedPiece=null;renderBlocks();}renderHud();setMessage("حرکت قبلی برگشت داده شد.");sfx("undo");}
@@ -80,6 +116,6 @@ function endBlocks(){best=Math.max(best,score);showModal("پایان بازی","
 function restart(){showModal("شروع دوباره","از اول شروع کنیم؟","پیشرفت همین مرحله پاک می‌شود.",[{label:"بله، شروع دوباره",primary:true,action:()=>startGame(mode)},{label:"ادامه بازی"}]);}
 function hint(){if(mode==="liquid"){liquidHint();return;}if(selectedPiece===null){const i=block.pieces.findIndex(p=>!p.used);if(i>=0)selectPiece(i);}if(selectedPiece!==null){const p=block.pieces[selectedPiece];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(BlockEngine.fits(block.board,p.shape,r,c)){setMessage("راهنما: قطعه انتخاب‌شده در ردیف "+fa(r+1)+"، ستون "+fa(c+1)+" جا می‌شود.");return;}}setMessage("برای این قطعه جای خالی مناسبی نیست.");}
 function settings(){showModal("تنظیمات","تنظیمات بازی","صدا را می‌توانی از دکمه بالای صفحه روشن یا خاموش کنی.",[{label:"متوجه شدم",primary:true}]);}
-$("#play-button").addEventListener("click",()=>showModal("انتخاب مسیر","اولین چالش تو","کدام معما را می‌خواهی حل کنی؟",[{label:"مرتب‌سازی رنگ",primary:true,action:()=>startGame("liquid")},{label:"پازل بلوکی",action:()=>startGame("blocks")} ]));
-$("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();sound(600);});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});document.body.classList.add("home-active");state.subscribe(renderHeader);renderHeader();
+$("#play-button").addEventListener("click",()=>{startAmbient();showModal("انتخاب مسیر","اولین چالش تو","کدام معما را می‌خواهی حل کنی؟",[{label:"مرتب‌سازی رنگ",primary:true,action:()=>startGame("liquid")},{label:"پازل بلوکی",action:()=>startGame("blocks")} ]);});
+$("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();if(state.get().sound){sound(600);startAmbient();}else stopAmbient();});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});document.body.classList.add("home-active");state.subscribe(renderHeader);renderHeader();
 })();
