@@ -1,69 +1,32 @@
-/* CHROMA QUEST — home screen interactions */
+/* CHROMA QUEST — playable game controller */
 (function(){
-  "use strict";
-  const state=window.ChromaState;
-  const $=selector=>document.querySelector(selector);
-  const backdrop=$("#modal-backdrop");
-  const title=$("#dialog-title");
-  const description=$("#dialog-description");
-  const kicker=$("#dialog-kicker");
-  const actions=$("#dialog-actions");
-  let previousFocus=null;
-
-  function openDialog(kind){
-    previousFocus=document.activeElement;
-    backdrop.hidden=false;
-    if(kind==="settings"){
-      kicker.textContent="تنظیمات بازی";
-      title.textContent="همه‌چیز روبه‌راهه؟";
-      description.textContent="تنظیمات اولیه بازی از همین‌جا قابل تغییر است.";
-      actions.innerHTML='<button class="secondary-button" id="settings-sound" type="button">تغییر وضعیت صدا</button><button class="primary-button compact" id="settings-done" type="button">بازگشت به بازی</button>';
-      $("#settings-sound").addEventListener("click",toggleSound);
-      $("#settings-done").addEventListener("click",closeDialog);
-    }else{
-      kicker.textContent="انتخاب مسیر";
-      title.textContent="اولین چالش تو";
-      description.textContent="برای شروع ماجراجویی یکی از مسیرهای زیر را انتخاب کن.";
-      actions.innerHTML='<button class="primary-button compact" data-mode="liquid" type="button">مرتب‌سازی رنگ <span>✦</span></button><button class="secondary-button" data-mode="blocks" type="button">پازل بلوکی <span>◆</span></button>';
-      actions.querySelectorAll("[data-mode]").forEach(button=>button.addEventListener("click",()=>chooseMode(button.dataset.mode)));
-    }
-    const focusTarget=actions.querySelector("button");
-    if(focusTarget)focusTarget.focus();
-  }
-  function closeDialog(){
-    backdrop.hidden=true;
-    if(previousFocus&&typeof previousFocus.focus==="function")previousFocus.focus();
-  }
-  function chooseMode(mode){
-    state.update({selectedMode:mode});
-    kicker.textContent=mode==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";
-    title.textContent=mode==="liquid"?"آماده مرتب‌سازی هستی؟":"وقت چیدن قطعه‌هاست!";
-    description.textContent="این مسیر برای نسخه بعدی در حال آماده‌سازی است. انتخابت ذخیره شد؛ به‌زودی اولین مرحله را بازی می‌کنی.";
-    actions.innerHTML='<button class="primary-button compact" id="mode-ok" type="button">متوجه شدم</button>';
-    $("#mode-ok").addEventListener("click",closeDialog);
-  }
-  function toggleSound(){
-    const next=!state.get().sound;
-    state.update({sound:next});
-    render();
-  }
-  function render(){
-    const current=state.get();
-    $("#gem-count").textContent=String(current.gems);
-    $("#level-stat").textContent=String(current.level).padStart(2,"0").replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
-    $("#sound-icon").textContent=current.sound?"♫":"♪̸";
-    $("#sound-toggle").setAttribute("aria-pressed",String(current.sound));
-    $("#sound-toggle").setAttribute("aria-label",current.sound?"خاموش کردن صدا":"روشن کردن صدا");
-  }
-
-  $("#play-button").addEventListener("click",()=>openDialog("play"));
-  $("#liquid-mode").addEventListener("click",()=>{openDialog("play");});
-  $("#block-mode").addEventListener("click",()=>{openDialog("play");});
-  $("#settings-open").addEventListener("click",()=>openDialog("settings"));
-  $("#sound-toggle").addEventListener("click",toggleSound);
-  $("#dialog-close").addEventListener("click",closeDialog);
-  backdrop.addEventListener("click",event=>{if(event.target===backdrop)closeDialog();});
-  document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!backdrop.hidden)closeDialog();});
-  state.subscribe(render);
-  render();
+"use strict";
+const $=s=>document.querySelector(s),state=window.ChromaState;
+const home=$("#home-screen"),game=$("#game-screen"),liquidBoard=$("#liquid-board"),blockWrap=$("#block-board-wrap"),blockBoard=$("#block-board"),tray=$("#piece-tray"),modal=$("#modal-backdrop");
+const fa=n=>String(n).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
+let mode=null,level=1,score=0,moves=0,best=0,selectedTube=null,selectedPiece=null,liquid=[],block=null,history=[];
+let audioContext=null;
+function sound(freq=440,duration=.07){if(!state.get().sound)return;try{audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.frequency.value=freq;osc.type="sine";gain.gain.setValueAtTime(.04,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+duration);}catch(e){}}
+function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
+function setMessage(t){$("#game-message").textContent=t;}
+function closeModal(){modal.hidden=true;}
+function showModal(kicker,title,description,buttons){$("#dialog-kicker").textContent=kicker;$("#dialog-title").textContent=title;$("#dialog-description").textContent=description;const actions=$("#dialog-actions");actions.innerHTML="";buttons.forEach(b=>{const el=document.createElement("button");el.className=b.primary?"primary-button":"secondary-button";el.textContent=b.label;el.addEventListener("click",()=>{closeModal();if(b.action)b.action();});actions.append(el);});modal.hidden=false;}
+function startGame(which){mode=which;level=state.get().level;home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sound(560);}
+function backHome(){game.hidden=true;home.hidden=false;mode=null;closeModal();}
+function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").textContent=fa(moves);$("#best-value").textContent=fa(best);}
+function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
+function undo(){const h=history.pop();if(!h){setMessage("هنوز حرکتی برای برگشت وجود ندارد.");return;}score=h.score;moves=h.moves;if(h.mode==="liquid"){liquid=LiquidEngine.clone(h.tubes);selectedTube=null;renderLiquid();}else{block={board:BlockEngine.clone(h.board),pieces:h.pieces};selectedPiece=null;renderBlocks();}renderHud();setMessage("حرکت قبلی برگشت داده شد.");sound(330);}
+function renderLiquid(){liquidBoard.innerHTML="";liquid.forEach((tube,index)=>{const el=document.createElement("button");el.type="button";el.className="tube"+(!tube.length?" empty":"")+(selectedTube===index?" selected":"");el.setAttribute("aria-label","لوله "+fa(index+1));tube.forEach(color=>{const layer=document.createElement("span");layer.className="liquid-layer";layer.style.background=LiquidEngine.COLORS[color];el.append(layer);});el.addEventListener("click",()=>tapTube(index));liquidBoard.append(el);});}
+function tapTube(index){if(selectedTube===null){if(!liquid[index].length){setMessage("اول یک لوله دارای مایع انتخاب کن.");return;}selectedTube=index;renderLiquid();setMessage("حالا لوله مقصد را انتخاب کن.");sound(410);return;}if(selectedTube===index){selectedTube=null;renderLiquid();setMessage("انتخاب لغو شد.");return;}if(!LiquidEngine.canPour(liquid,selectedTube,index)){if(!liquid[index].length||liquid[index].at(-1)===liquid[selectedTube].at(-1)){setMessage("این حرکت امکان‌پذیر نیست.");sound(170);return;}selectedTube=index;renderLiquid();setMessage("فقط روی رنگ مشابه یا لوله خالی بریز.");sound(170);return;}pushHistory();const result=LiquidEngine.pour(liquid,selectedTube,index);liquid=result.tubes;selectedTube=null;moves++;score+=result.amount*5;renderLiquid();renderHud();sound(520+result.amount*80);if(LiquidEngine.won(liquid))winLevel("liquid");else setMessage(result.amount+" واحد مایع جابه‌جا شد. ادامه بده!");}
+function liquidHint(){for(let a=0;a<liquid.length;a++)for(let b=0;b<liquid.length;b++)if(LiquidEngine.canPour(liquid,a,b)){setMessage("راهنما: از لوله "+fa(a+1)+" به لوله "+fa(b+1)+" انتقال بده.");const els=liquidBoard.children;els[a].classList.add("selected");els[b].style.borderColor="#ffe28b";setTimeout(()=>{if(els[a])els[a].classList.remove("selected");if(els[b])els[b].style.borderColor="";},1300);return;}setMessage("حرکت مناسبی پیدا نشد؛ بازی را دوباره شروع کن.");}
+function renderBlocks(){blockBoard.innerHTML="";for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement("button");cell.type="button";cell.className="block-cell"+(block.board[r][c]?" filled":"");cell.setAttribute("role","gridcell");if(block.board[r][c])cell.style.setProperty("--cell-color",block.board[r][c]);cell.addEventListener("click",()=>placeSelected(r,c));blockBoard.append(cell);}tray.innerHTML="";block.pieces.forEach((piece,index)=>{const slot=document.createElement("button");slot.type="button";slot.className="piece-slot"+(piece.used?" used":"")+(selectedPiece===index?" selected":"");slot.setAttribute("aria-label","قطعه "+fa(index+1));if(!piece.used){const shape=document.createElement("span");shape.className="piece-shape";shape.style.gridTemplateColumns="repeat("+piece.shape[0].length+",17px)";shape.style.setProperty("--piece-color",piece.color);piece.shape.forEach(row=>row.forEach(v=>{const sq=document.createElement("i");sq.className="piece-square";sq.style.visibility=v?"visible":"hidden";shape.append(sq);}));slot.append(shape);}slot.addEventListener("click",()=>selectPiece(index));tray.append(slot);});}
+function selectPiece(i){if(block.pieces[i].used)return;selectedPiece=i;renderBlocks();setMessage("حالا محل قرارگیری قطعه را روی صفحه لمس کن.");sound(420);}
+function placeSelected(r,c){if(selectedPiece===null){setMessage("اول یکی از قطعه‌های پایین صفحه را انتخاب کن.");return;}const p=block.pieces[selectedPiece],result=BlockEngine.place(block.board,p,r,c);if(!result){setMessage("این قطعه در این محل جا نمی‌شود.");sound(160);return;}pushHistory();block.board=result.board;p.used=true;moves++;score+=result.points;if(result.cleared){score+=result.cleared*10;setMessage("آفرین! "+fa(result.rows)+" ردیف و "+fa(result.cols)+" ستون پاک شد.");sound(760);}else setMessage("قطعه با موفقیت قرار گرفت.");selectedPiece=null;if(block.pieces.every(x=>x.used))block.pieces=BlockEngine.newPieces();renderBlocks();renderHud();if(!BlockEngine.anyMove(block.board,block.pieces)){endBlocks();return;}sound(520);}
+function winLevel(which){const reward=35+level*5;state.update({gems:state.get().gems+reward,level:level+1});renderHeader();showModal("مرحله کامل شد ✦","درخشان بود!","معما را حل کردی و "+fa(reward)+" کریستال به دست آوردی.",[{label:"مرحله بعدی",primary:true,action:()=>startGame(which)},{label:"صفحه اصلی",action:backHome}]);sound(880,.18);}
+function endBlocks(){best=Math.max(best,score);showModal("پایان بازی","حرکت دیگری باقی نمانده","امتیاز تو: "+fa(score)+" · برای رکورد بهتر دوباره تلاش کن.",[{label:"بازی دوباره",primary:true,action:()=>startGame("blocks")},{label:"صفحه اصلی",action:backHome}]);}
+function restart(){showModal("شروع دوباره","از اول شروع کنیم؟","پیشرفت همین مرحله پاک می‌شود.",[{label:"بله، شروع دوباره",primary:true,action:()=>startGame(mode)},{label:"ادامه بازی"}]);}
+function hint(){if(mode==="liquid"){liquidHint();return;}if(selectedPiece===null){const i=block.pieces.findIndex(p=>!p.used);if(i>=0)selectPiece(i);}if(selectedPiece!==null){const p=block.pieces[selectedPiece];for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(BlockEngine.fits(block.board,p.shape,r,c)){setMessage("راهنما: قطعه انتخاب‌شده در ردیف "+fa(r+1)+"، ستون "+fa(c+1)+" جا می‌شود.");return;}}setMessage("برای این قطعه جای خالی مناسبی نیست.");}
+function settings(){showModal("تنظیمات","تنظیمات بازی","صدا را می‌توانی از دکمه بالای صفحه روشن یا خاموش کنی.",[{label:"متوجه شدم",primary:true}]);}
+$("#play-button").addEventListener("click",()=>showModal("انتخاب مسیر","اولین چالش تو","کدام معما را می‌خواهی حل کنی؟",[{label:"مرتب‌سازی رنگ",primary:true,action:()=>startGame("liquid")},{label:"پازل بلوکی",action:()=>startGame("blocks")} ]));
+$("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();sound(600);});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});state.subscribe(renderHeader);renderHeader();
 })();
