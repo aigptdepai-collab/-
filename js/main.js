@@ -4,7 +4,7 @@
 const $=s=>document.querySelector(s),state=window.ChromaState;
 const home=$("#home-screen"),game=$("#game-screen"),liquidBoard=$("#liquid-board"),blockWrap=$("#block-board-wrap"),blockBoard=$("#block-board"),tray=$("#piece-tray"),modal=$("#modal-backdrop");
 const fa=n=>String(n).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
-let mode=null,level=1,score=0,moves=0,best=0,selectedTube=null,selectedPiece=null,liquid=[],block=null,history=[];
+let mode=null,level=1,score=0,moves=0,best=0,selectedTube=null,selectedPiece=null,liquid=[],block=null,history=[],pourAnimating=false;
 let audioContext=null;
 function sound(freq=440,duration=.07){if(!state.get().sound)return;try{audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();const osc=audioContext.createOscillator(),gain=audioContext.createGain();osc.frequency.value=freq;osc.type="sine";gain.gain.setValueAtTime(.04,audioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);osc.connect(gain);gain.connect(audioContext.destination);osc.start();osc.stop(audioContext.currentTime+duration);}catch(e){}}
 function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
@@ -17,7 +17,34 @@ function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").t
 function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
 function undo(){const h=history.pop();if(!h){setMessage("هنوز حرکتی برای برگشت وجود ندارد.");return;}score=h.score;moves=h.moves;if(h.mode==="liquid"){liquid=LiquidEngine.clone(h.tubes);selectedTube=null;renderLiquid();}else{block={board:BlockEngine.clone(h.board),pieces:h.pieces};selectedPiece=null;renderBlocks();}renderHud();setMessage("حرکت قبلی برگشت داده شد.");sound(330);}
 function renderLiquid(targetIndex=null,flowAmount=0,sourceIndex=null){liquidBoard.innerHTML="";liquid.forEach((tube,index)=>{const el=document.createElement("button");el.type="button";el.className="tube"+(!tube.length?" empty":"")+(selectedTube===index?" selected":"")+(targetIndex===index?" pour-target":"")+(sourceIndex===index?" pour-source":"");el.setAttribute("aria-label","لوله "+fa(index+1));tube.forEach((color,layerIndex)=>{const layer=document.createElement("span");layer.className="liquid-layer"+(targetIndex===index&&layerIndex>=tube.length-flowAmount?" flow-in":"");layer.style.background=LiquidEngine.COLORS[color];el.append(layer);});el.addEventListener("click",()=>tapTube(index));liquidBoard.append(el);});}
-function tapTube(index){if(selectedTube===null){if(!liquid[index].length){setMessage("اول یک لوله دارای مایع انتخاب کن.");return;}selectedTube=index;renderLiquid();setMessage("حالا لوله مقصد را انتخاب کن.");sound(410);return;}if(selectedTube===index){selectedTube=null;renderLiquid();setMessage("انتخاب لغو شد.");return;}if(!LiquidEngine.canPour(liquid,selectedTube,index)){if(!liquid[index].length||liquid[index].at(-1)===liquid[selectedTube].at(-1)){setMessage("این حرکت امکان‌پذیر نیست.");sound(170);return;}selectedTube=index;renderLiquid();setMessage("فقط روی رنگ مشابه یا لوله خالی بریز.");sound(170);return;}pushHistory();const result=LiquidEngine.pour(liquid,selectedTube,index);const fromIndex=selectedTube;liquid=result.tubes;selectedTube=null;moves++;score+=result.amount*5;renderLiquid(index,result.amount,fromIndex);renderHud();sound(520+result.amount*80);if(LiquidEngine.won(liquid))winLevel("liquid");else setMessage(result.amount+" واحد مایع جابه‌جا شد. ادامه بده!");}
+function animatePour(fromIndex,toIndex,color,onComplete){
+ const source=liquidBoard.children[fromIndex],target=liquidBoard.children[toIndex];
+ if(!source||!target){onComplete();return;}
+ pourAnimating=true;
+ const a=source.getBoundingClientRect(),b=target.getBoundingClientRect();
+ const x1=a.left+a.width/2,y1=a.top+5,x2=b.left+b.width/2,y2=b.top+5;
+ const dx=x2-x1,dy=y2-y1;
+ const lift=Math.max(55,Math.min(125,Math.abs(dx)*.22+Math.abs(dy)*.12));
+ const pathData="M "+x1+" "+y1+" C "+(x1+dx*.28)+" "+(y1-lift)+" "+(x2-dx*.28)+" "+(y2-lift)+" "+x2+" "+y2;
+ const svgNS="http://www.w3.org/2000/svg";
+ const svg=document.createElementNS(svgNS,"svg");
+ svg.setAttribute("viewBox","0 0 "+window.innerWidth+" "+window.innerHeight);
+ svg.setAttribute("class","pour-flight-overlay");
+ const defs=document.createElementNS(svgNS,"defs"),gradient=document.createElementNS(svgNS,"linearGradient");
+ gradient.setAttribute("id","pour-gradient");gradient.setAttribute("x1","0");gradient.setAttribute("y1","0");gradient.setAttribute("x2","1");gradient.setAttribute("y2","0");
+ [[0,"#ffffff"],[.35,LiquidEngine.COLORS[color]],[1,LiquidEngine.COLORS[color]]].forEach(([offset,hex])=>{const stop=document.createElementNS(svgNS,"stop");stop.setAttribute("offset",offset);stop.setAttribute("stop-color",hex);gradient.append(stop);});
+ defs.append(gradient);svg.append(defs);
+ const path=document.createElementNS(svgNS,"path");
+ path.setAttribute("d",pathData);path.setAttribute("fill","none");path.setAttribute("stroke","url(#pour-gradient)");
+ path.setAttribute("stroke-width",Math.max(7,Math.min(13,a.width*.25)));path.setAttribute("stroke-linecap","round");
+ path.setAttribute("pathLength","1");path.setAttribute("stroke-dasharray","1");path.setAttribute("stroke-dashoffset","1");path.setAttribute("class","pour-flight-stream");
+ svg.append(path);document.body.append(svg);
+ source.classList.add("pour-source");
+ target.classList.add("pour-target");
+ requestAnimationFrame(()=>path.classList.add("travel"));
+ window.setTimeout(()=>{svg.remove();onComplete();},520);
+}
+function tapTube(index){if(pourAnimating)return;if(selectedTube===null){if(!liquid[index].length){setMessage("اول یک لوله دارای مایع انتخاب کن.");return;}selectedTube=index;renderLiquid();setMessage("حالا لوله مقصد را انتخاب کن.");sound(410);return;}if(selectedTube===index){selectedTube=null;renderLiquid();setMessage("انتخاب لغو شد.");return;}if(!LiquidEngine.canPour(liquid,selectedTube,index)){if(!liquid[index].length||liquid[index].at(-1)===liquid[selectedTube].at(-1)){setMessage("این حرکت امکان‌پذیر نیست.");sound(170);return;}selectedTube=index;renderLiquid();setMessage("فقط روی رنگ مشابه یا لوله خالی بریز.");sound(170);return;}pushHistory();const result=LiquidEngine.pour(liquid,selectedTube,index);const fromIndex=selectedTube;const oldTubes=liquid;liquid=result.tubes;selectedTube=null;moves++;score+=result.amount*5;renderHud();sound(520+result.amount*80);animatePour(fromIndex,index,result.color,()=>{renderLiquid(index,result.amount,fromIndex);pourAnimating=false;if(LiquidEngine.won(liquid))winLevel("liquid");else setMessage(fa(result.amount)+" واحد مایع جابه‌جا شد. ادامه بده!");});}
 function liquidHint(){for(let a=0;a<liquid.length;a++)for(let b=0;b<liquid.length;b++)if(LiquidEngine.canPour(liquid,a,b)){setMessage("راهنما: از لوله "+fa(a+1)+" به لوله "+fa(b+1)+" انتقال بده.");const els=liquidBoard.children;els[a].classList.add("selected");els[b].style.borderColor="#ffe28b";setTimeout(()=>{if(els[a])els[a].classList.remove("selected");if(els[b])els[b].style.borderColor="";},1300);return;}setMessage("حرکت مناسبی پیدا نشد؛ بازی را دوباره شروع کن.");}
 function renderBlocks(placedCells=[]){const placedSet=new Set(placedCells.map(([r,c])=>r+","+c));blockBoard.innerHTML="";for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement("button");cell.type="button";cell.className="block-cell"+(block.board[r][c]?" filled":"")+(placedSet.has(r+","+c)?" placed":"");cell.setAttribute("role","gridcell");if(block.board[r][c])cell.style.setProperty("--cell-color",block.board[r][c]);cell.addEventListener("click",()=>placeSelected(r,c));blockBoard.append(cell);}tray.innerHTML="";block.pieces.forEach((piece,index)=>{const slot=document.createElement("button");slot.type="button";slot.className="piece-slot"+(piece.used?" used":"")+(selectedPiece===index?" selected":"");slot.setAttribute("aria-label","قطعه "+fa(index+1));if(!piece.used){const shape=document.createElement("span");shape.className="piece-shape";shape.style.gridTemplateColumns="repeat("+piece.shape[0].length+",17px)";shape.style.setProperty("--piece-color",piece.color);piece.shape.forEach(row=>row.forEach(v=>{const sq=document.createElement("i");sq.className="piece-square";sq.style.visibility=v?"visible":"hidden";shape.append(sq);}));slot.append(shape);}slot.addEventListener("click",()=>selectPiece(index));tray.append(slot);});}
 function selectPiece(i){if(block.pieces[i].used)return;selectedPiece=i;renderBlocks();setMessage("حالا محل قرارگیری قطعه را روی صفحه لمس کن.");sound(420);}
