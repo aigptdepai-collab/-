@@ -1,43 +1,29 @@
-# CHROMA QUEST
+# CHROMA QUEST ✦
+بازی فکری ترکیبی با ظاهر تاریک و نئونی؛ فارسی و سازگار با موبایل.
 
-**A neon puzzle adventure — ماجراجویی در دنیای رنگ‌ها**
+## اجرا
+فایل `index.html` را در مرورگر باز کن یا مخزن را روی GitHub Pages / Cloudflare Pages منتشر کن. فونت Vazirmatn از Google Fonts بارگذاری می‌شود و برای آن اینترنت لازم است.
 
-CHROMA QUEST is a mobile-first puzzle game concept with two puzzle paths:
-- **Liquid Sort:** organize colored liquids with limited tube capacity.
-- **Block Puzzle:** place shapes strategically to clear rows and columns.
+## حالت‌های قابل بازی
+### Liquid Sort
+- لوله‌ها را لمس کن تا مایع از یک لوله به لوله دیگر منتقل شود.
+- فقط روی لوله خالی یا رنگ همسان می‌توان ریخت؛ ظرفیت هر لوله چهار واحد است.
+- با یکدست شدن لوله‌ها مرحله کامل می‌شود.
+- Undo، راهنما و شروع دوباره دارد.
+- با پیشروی، تعداد رنگ‌ها بیشتر می‌شود.
 
-## Current milestone
+### Block Puzzle
+- یکی از سه قطعه پایین صفحه را انتخاب کن.
+- خانه مقصد را لمس کن تا قطعه قرار گیرد.
+- با کامل شدن ردیف یا ستون، خانه‌ها پاک می‌شوند.
+- اگر هیچ قطعه‌ای در هیچ جای صفحه جا نشود، بازی تمام می‌شود.
+- Undo، راهنما و شروع دوباره دارد.
 
-The first milestone establishes the cinematic home screen:
-- Persian RTL interface
-- Dark, purple-and-cyan neon visual identity
-- Animated prism centerpiece and ambient effects
-- Responsive layout for mobile and desktop
-- Initial local state (gems, level, sound, selected mode)
-- Working home-screen dialogs and settings interactions
+## ذخیره‌سازی
+کریستال‌ها، مرحله و تنظیم صدا در localStorage ذخیره می‌شوند. پیشرفت فعلاً محلی و روی همان مرورگر/دستگاه است.
 
-The puzzle engines are not implemented yet. Mode selection currently records the choice and displays a preparation message.
+## فایل‌ها
+`index.html`, `styles.css`, `js/state.js`, `js/liquid.js`, `js/blocks.js`, `js/main.js`.
 
-## Run locally
-
-Open `index.html` in a modern browser. An internet connection is currently used for the Vazirmatn web font; system fonts are used as fallback.
-
-## Project structure
-
-```
-index.html
-styles.css
-js/
-  state.js
-  main.js
-README.md
-```
-
-## Next milestones
-
-1. Build and test the Liquid Sort engine.
-2. Build and test the Block Puzzle engine.
-3. Add level progression, rewards, sound effects, and persistence.
-4. Test touch controls and package the mobile version.
-
-All game state in this prototype is stored locally in the browser.
+## وضعیت نسخه
+این یک نسخه اولیه قابل‌بازی برای تست مکانیک‌های اصلی است؛ هنوز انتشار فروشگاهی، حساب کاربری آنلاین، جدول رتبه‌بندی ابری، تبلیغات یا صداگذاری حرفه‌ای ندارد.
