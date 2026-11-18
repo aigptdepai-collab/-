@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "chroma-quest-state-v1";
-  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null});
+  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
   function read(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
@@ -12,7 +12,13 @@
         gems:Number.isFinite(saved.gems)?Math.max(0,saved.gems):defaults.gems,
         level:Number.isFinite(saved.level)?Math.max(1,saved.level):defaults.level,
         sound:typeof saved.sound==="boolean"?saved.sound:defaults.sound,
-        selectedMode:["liquid","blocks"].includes(saved.selectedMode)?saved.selectedMode:null
+        selectedMode:["liquid","blocks"].includes(saved.selectedMode)?saved.selectedMode:null,
+        stats:{
+          liquidWins:Number.isFinite(saved.stats?.liquidWins)?Math.max(0,saved.stats.liquidWins):0,
+          blockRuns:Number.isFinite(saved.stats?.blockRuns)?Math.max(0,saved.stats.blockRuns):0,
+          blockClears:Number.isFinite(saved.stats?.blockClears)?Math.max(0,saved.stats.blockClears):0,
+          bestBlockScore:Number.isFinite(saved.stats?.bestBlockScore)?Math.max(0,saved.stats.bestBlockScore):0
+        }
       };
     }catch(error){console.warn("Could not read saved game state.",error);return {...defaults};}
   }
