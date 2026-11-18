@@ -148,3 +148,15 @@ body.home-active .footer { flex: 0 0 auto; margin-top: 10px; padding-top: 8px; f
 @keyframes liquidFlow { 0%{transform:scaleY(.08);filter:brightness(1.8)} 65%{transform:scaleY(1.08);filter:brightness(1.35)} 100%{transform:scaleY(1);filter:brightness(1)} }
 @keyframes blockPop { 0%{transform:scale(.45);opacity:.35;filter:brightness(1.8)} 75%{transform:scale(1.09);opacity:1} 100%{transform:scale(1);filter:brightness(1)} }
 @media(prefers-reduced-motion:reduce){.tube.pour-target,.tube.pour-source,.liquid-layer.flow-in,.block-cell.placed{animation:none!important}}
+
+
+/* Real liquid transfer: a glowing stream travels between tube openings */
+.pour-flight-overlay{position:fixed;inset:0;width:100%;height:100%;z-index:30;pointer-events:none;overflow:visible}
+.pour-flight-stream{filter:drop-shadow(0 0 5px #fff9) drop-shadow(0 0 12px currentColor);opacity:.95}
+.pour-flight-stream.travel{animation:pourStreamTravel .48s cubic-bezier(.35,.02,.62,.98) forwards}
+.tube.pour-source{animation:tubeTiltPour .48s ease-in-out}
+.tube.pour-target{animation:tubeCatchPour .48s ease-out}
+@keyframes pourStreamTravel{0%{stroke-dashoffset:1;opacity:0}12%{opacity:1}82%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:0}}
+@keyframes tubeTiltPour{0%,100%{transform:rotate(0) translateY(0)}22%{transform:rotate(-7deg) translateY(-3px)}65%{transform:rotate(-3deg)}}
+@keyframes tubeCatchPour{0%,100%{transform:translateY(0)}55%{transform:translateY(-5px) scale(1.035)}}
+@media(prefers-reduced-motion:reduce){.pour-flight-stream.travel,.tube.pour-source,.tube.pour-target{animation:none!important}}
