@@ -74,3 +74,65 @@ body.game-active #block-board-wrap {
 body.game-active .game-message {
   margin-bottom:0 !important;
 }
+
+
+/* HOME MENU: fit the complete menu inside the phone viewport */
+body.home-active {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+body.home-active .app-shell {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-top: max(8px, env(safe-area-inset-top));
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+body.home-active .topbar { flex: 0 0 46px; }
+body.home-active #home-screen {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.home-active .hero {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 4px 0 8px;
+  grid-template-rows: minmax(0,1fr) auto;
+}
+body.home-active .hero-copy { padding-top: 10px; }
+body.home-active .hero h1 { font-size: clamp(25px, 5.5vw, 38px); line-height: 1.3; }
+body.home-active .hero-description { font-size: 10px; line-height: 1.6; margin-top: 7px; }
+body.home-active .core-stage { height: clamp(150px, 27dvh, 220px); }
+body.home-active .orbit-a { width: 190px; height: 75px; }
+body.home-active .orbit-b { width: 210px; height: 95px; }
+body.home-active .orbit-c { width: 165px; height: 165px; }
+body.home-active .core-caption { bottom: 4px; }
+body.home-active .hero-bottom { gap: 6px; padding-top: 0; }
+body.home-active .chapter-label { font-size: 9px; }
+body.home-active .primary-button { min-height: 46px; border-radius: 14px; }
+body.home-active .continue-hint { display: none; }
+body.home-active .quick-stats { flex: 0 0 auto; margin: 4px 0 12px; gap: 7px; }
+body.home-active .stat-card { min-height: 54px; padding: 6px; gap: 6px; }
+body.home-active .stat-icon { width: 27px; height: 27px; }
+body.home-active .modes-section { flex: 0 0 auto; padding: 0 1px; }
+body.home-active .section-heading { margin-bottom: 8px; }
+body.home-active .section-heading .eyebrow { display: none; }
+body.home-active .section-heading h2 { font-size: 15px; }
+body.home-active .mode-card { min-height: 105px; padding: 8px; }
+body.home-active .mode-art { height: 49px; }
+body.home-active .mode-art i { transform: scale(.82); }
+body.home-active .footer { flex: 0 0 auto; margin-top: 10px; padding-top: 8px; font-size: 8px; }
+@media (max-height: 700px) {
+  body.home-active .hero-description { display: none; }
+  body.home-active .core-stage { height: clamp(135px, 24dvh, 175px); }
+  body.home-active .quick-stats { margin-bottom: 8px; }
+  body.home-active .mode-card { min-height: 92px; }
+  body.home-active .mode-art { height: 40px; }
+  body.home-active .footer { margin-top: 6px; padding-top: 5px; }
+}
