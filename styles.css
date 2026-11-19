@@ -666,3 +666,6 @@ body.intro-active .app-shell,body.intro-active .bottom-nav{visibility:hidden}
 @keyframes introTwinkle{from{opacity:.25;transform:scale(.6)}to{opacity:1;transform:scale(1.5)}}
 @media(prefers-reduced-motion:reduce){.intro-splash *{animation-duration:.01ms!important;animation-iteration-count:1!important}.intro-splash{transition:none}}
 @media(max-height:620px){.intro-crystal{width:72px;height:84px}.intro-brand{margin-top:15px}.intro-progress{margin-top:18px}}
+
+/* The home bottom navigation is only for the home screen, never during gameplay. */
+body.game-active .bottom-nav{display:none!important;}
