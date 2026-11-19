@@ -2,7 +2,7 @@
 (function(){
 "use strict";
 const $=s=>document.querySelector(s),state=window.ChromaState;
-const home=$("#home-screen"),game=$("#game-screen"),liquidBoard=$("#liquid-board"),blockWrap=$("#block-board-wrap"),blockBoard=$("#block-board"),tray=$("#piece-tray"),modal=$("#modal-backdrop");
+const home=$("#home-screen"),game=$("#game-screen"),store=$("#store-screen"),liquidBoard=$("#liquid-board"),blockWrap=$("#block-board-wrap"),blockBoard=$("#block-board"),tray=$("#piece-tray"),modal=$("#modal-backdrop");
 const fa=n=>String(n).replace(/[0-9]/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
 let mode=null,level=1,score=0,moves=0,best=0,selectedTube=null,selectedPiece=null,liquid=[],block=null,history=[],pourAnimating=false,blockAnimating=false,hintUses=0;
 let audioContext=null;
@@ -33,7 +33,57 @@ function sfx(kind){
  };
  (notes[kind]||[]).forEach(([freq,duration,when,wave,volume])=>tone(freq,duration,when,wave,volume));
 }
-function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
+function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
+
+const STORE_ITEMS=[
+ {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true},
+ {id:"theme-aurora",type:"theme",name:"شفق قطبی",tag:"ATMOSPHERE",desc:"ترکیب فیروزه‌ای و سبز زمردی",price:90,swatch:"aurora"},
+ {id:"theme-ember",type:"theme",name:"کهربای عمیق",tag:"SIGNATURE",desc:"درخشش گرم با رگه‌های طلایی",price:140,swatch:"ember"},
+ {id:"theme-midnight",type:"theme",name:"نیمه‌شب",tag:"NOCTURNE",desc:"آبی جوهری با نورهای سرد",price:180,swatch:"midnight"},
+ {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"VISUAL EFFECT",desc:"درخشش ظریف هنگام حرکت و امتیاز",price:110,swatch:"prism"},
+ {id:"effect-orbit",type:"effect",name:"مدار نور",tag:"VISUAL EFFECT",desc:"هاله‌ای پویا برای لحظه‌های ویژه",price:160,swatch:"orbit"}
+];
+function renderStore(){
+ const s=state.get(),grid=$("#store-grid");if(!grid)return;
+ $("#store-gems").textContent=fa(s.gems);grid.innerHTML="";
+ STORE_ITEMS.forEach(item=>{
+  const owned=s.ownedItems.includes(item.id),equipped=s.equippedTheme===item.id;
+  const card=document.createElement("article");card.className="store-item "+(equipped?"is-equipped":"");
+  const art=document.createElement("div");art.className="store-item-art art-"+item.swatch;
+  art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><small>'+item.tag+'</small>';
+  const info=document.createElement("div");info.className="store-item-info";
+  const title=document.createElement("h3");title.textContent=item.name;
+  const desc=document.createElement("p");desc.textContent=item.desc;
+  const foot=document.createElement("div");foot.className="store-item-foot";
+  const price=document.createElement("span");price.className="item-price";price.textContent=item.price===0?"رایگان": "◆ "+fa(item.price);
+  const button=document.createElement("button");button.type="button";button.className="item-action"+(equipped?" equipped":"");
+  button.textContent=equipped?"فعال است":owned?"انتخاب": "بازگشایی";
+  button.disabled=equipped;
+  button.addEventListener("click",()=>storeAction(item));
+  foot.append(price,button);info.append(title,desc,foot);card.append(art,info);grid.append(card);
+ });
+}
+function storeAction(item){
+ const s=state.get(),owned=s.ownedItems.includes(item.id);
+ if(!owned){
+  if(s.gems<item.price){showModal("کریستال کافی نیست","هنوز به این آیتم نمی‌رسی","با حل مراحل مرتب‌سازی رنگ کریستال بیشتری جمع کن.",[{label:"متوجه شدم",primary:true}]);return;}
+  state.update({gems:s.gems-item.price,ownedItems:[...s.ownedItems,item.id]});
+ }
+ if(item.type==="theme")state.update({equippedTheme:item.id});
+ renderStore();renderHeader();sfx("select");
+}
+function openStore(){
+ document.body.classList.remove("game-active");document.body.classList.add("home-active","store-active");
+ home.hidden=true;game.hidden=true;store.hidden=false;
+ $("#home-nav").classList.remove("active");$("#home-nav").removeAttribute("aria-current");
+ $("#store-nav").classList.add("active");renderStore();window.scrollTo({top:0,behavior:"smooth"});
+}
+function closeStore(){
+ store.hidden=true;home.hidden=false;document.body.classList.remove("store-active");
+ $("#store-nav").classList.remove("active");$("#home-nav").classList.add("active");$("#home-nav").setAttribute("aria-current","page");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
 function setMessage(t){$("#game-message").textContent=t;}
 function closeModal(){modal.hidden=true;modal.classList.remove("result-win","result-lose","achievement-view");}
 function showModal(kicker,title,description,buttons,resultType=""){modal.classList.remove("result-win","result-lose","achievement-view");if(kicker==="تالار افتخارات")modal.classList.add("achievement-view");if(resultType)modal.classList.add("result-"+resultType);$("#dialog-kicker").textContent=kicker;$("#dialog-title").textContent=title;$("#dialog-description").textContent=description;const actions=$("#dialog-actions");actions.innerHTML="";buttons.forEach(b=>{const el=document.createElement("button");el.className=b.primary?"primary-button":"secondary-button";el.textContent=b.label;el.addEventListener("click",()=>{closeModal();if(b.action)b.action();});actions.append(el);});modal.hidden=false;}
@@ -84,5 +134,5 @@ function bestBlockMove(){let bestMove=null;block.pieces.forEach((p,i)=>{if(p.use
 function hint(){if(hintUses>=1){setMessage("راهنمای این مرحله استفاده شده؛ ادامه‌اش با خودته!");return;}hintUses++;updateHintButton();const tier=1;if(mode==="liquid"){const move=bestLiquidMove();if(!move){setMessage("حرکت قانونی پیدا نشد؛ شاید زمان شروع دوباره باشد.");return;}const from=fa(move.from+1),to=fa(move.to+1);setMessage("یک اشاره: به لوله‌ای توجه کن که رنگ بالایی آن با رنگ لولهٔ دیگری جور است.");return;}const move=bestBlockMove();if(!move){setMessage("برای قطعه‌های باقی‌مانده جای مناسبی پیدا نشد.");return;}setMessage("یک اشاره: به قطعه‌ای فکر کن که می‌تواند چند خانه یا یک ردیف را کامل کند.");}
 function showAchievements(){const s=state.get(),a=s.stats;const items=[["اولین پیروزی","بردن اولین مرحله مرتب‌سازی رنگ",a.liquidWins>=1,"۱/۱",Math.min(a.liquidWins,1)],["قهرمان رنگ‌ها","بردن ۵ مرحله مرتب‌سازی رنگ",a.liquidWins>=5,fa(Math.min(a.liquidWins,5))+" / ۵",Math.min(a.liquidWins,5)],["شروع بلوکی","تمام کردن اولین دور پازل بلوکی",a.blockRuns>=1,fa(Math.min(a.blockRuns,1))+" / ۱",Math.min(a.blockRuns,1)],["شکننده ردیف‌ها","پاک کردن ۱۰ ردیف یا ستون",a.blockClears>=10,fa(Math.min(a.blockClears,10))+" / ۱۰",Math.min(a.blockClears,10)],["امتیاز درخشان","رسیدن به امتیاز ۵۰۰ در پازل بلوکی",a.bestBlockScore>=500,fa(Math.min(a.bestBlockScore,500))+" / ۵۰۰",Math.min(a.bestBlockScore,500)]];const unlocked=items.filter(x=>x[2]).length;const description=items.map(x=>(x[2]?"🏅 ":"🔒 ")+x[0]+" — "+x[1]+" ("+x[3]+")").join("\n");showModal("تالار افتخارات",fa(unlocked)+" از ۵ مدال باز شده",description,[{label:"بازگشت",primary:true}]);}
 function settings(){showModal("تنظیمات","تنظیمات بازی","صدا را می‌توانی از دکمه بالای صفحه روشن یا خاموش کنی.",[{label:"متوجه شدم",primary:true}]);} $("#play-button").addEventListener("click",()=>{showModal("انتخاب مسیر","اولین چالش تو","کدام معما را می‌خواهی حل کنی؟",[{label:"مرتب‌سازی رنگ",primary:true,action:()=>startGame("liquid")},{label:"پازل بلوکی",action:()=>startGame("blocks")} ]);});
-$("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#achievements-nav").addEventListener("click",showAchievements);$("#home-nav").addEventListener("click",backHome);$("#store-nav").addEventListener("click",()=>showModal("فروشگاه کریستال","فروشگاه به‌زودی باز می‌شود","به‌زودی می‌توانی ظاهرهای تازه و آیتم‌های ویژه را از اینجا انتخاب کنی.",[{label:"متوجه شدم",primary:true}]));$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();if(state.get().sound){sound(600);}});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});document.body.classList.add("home-active");state.subscribe(renderHeader);renderHeader();
+$("#liquid-mode").addEventListener("click",()=>startGame("liquid"));$("#block-mode").addEventListener("click",()=>startGame("blocks"));$("#back-home").addEventListener("click",backHome);$("#home-link").addEventListener("click",e=>{e.preventDefault();backHome();});$("#undo-button").addEventListener("click",undo);$("#hint-button").addEventListener("click",hint);$("#restart-button").addEventListener("click",restart);$("#settings-open").addEventListener("click",settings);$("#achievements-nav").addEventListener("click",showAchievements);$("#home-nav").addEventListener("click",backHome);$("#store-nav").addEventListener("click",openStore);$("#store-back").addEventListener("click",closeStore);$("#sound-toggle").addEventListener("click",()=>{state.update({sound:!state.get().sound});renderHeader();if(state.get().sound){sound(600);}});$("#dialog-close").addEventListener("click",closeModal);modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!modal.hidden)closeModal();else if(!game.hidden)backHome();}});document.body.classList.add("home-active");state.subscribe(renderHeader);renderHeader();
 })();
