@@ -629,3 +629,40 @@ body.game-active .liquid-board .tube{
 .hint-piece{border-color:#ffe28b!important;box-shadow:0 0 0 3px #ffe28b33,0 0 20px #ffe28b88!important}
 @keyframes hintPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
 @media(prefers-reduced-motion:reduce){.hint-target{animation:none}}
+
+
+/* CINEMATIC ENTRY — CHROMA QUEST */
+.intro-splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 46%,#25134b 0%,#100b25 38%,#070610 78%);color:#f8f2ff;opacity:1;visibility:visible;transition:opacity .48s ease,visibility .48s ease}
+.intro-splash:before,.intro-splash:after{content:"";position:absolute;inset:-30%;pointer-events:none}
+.intro-splash:before{background:conic-gradient(from 0deg at 50% 50%,transparent 0 22%,#9b5cff12 27%,transparent 34% 62%,#4de7ff0c 68%,transparent 75%);animation:introTurn 7s linear infinite}
+.intro-splash:after{background:radial-gradient(ellipse at center,transparent 22%,#05040bc9 78%)}
+.intro-splash.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
+body.intro-active{overflow:hidden}
+body.intro-active .app-shell,body.intro-active .bottom-nav{visibility:hidden}
+.intro-aura{position:absolute;width:min(70vw,390px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#9b5cff38 0%,#7041d522 35%,transparent 70%);filter:blur(18px);animation:introBreathe 2s ease-in-out infinite alternate}
+.intro-orbit{position:absolute;width:210px;height:210px;border:1px solid #c7a2ff30;border-radius:50%;box-shadow:0 0 28px #8d55ff12;animation:introOrbit 5s linear infinite}
+.intro-orbit-one{transform:rotateX(68deg) rotateZ(-24deg)}
+.intro-orbit-two{width:260px;height:260px;border-color:#4de7ff20;transform:rotateX(72deg) rotateZ(52deg);animation-direction:reverse}
+.intro-crystal{position:relative;z-index:2;width:94px;height:110px;display:grid;place-items:center;filter:drop-shadow(0 0 16px #a56bff88);animation:introCrystalIn .85s cubic-bezier(.18,.8,.25,1.2) both,introFloat 2.6s ease-in-out .85s infinite}
+.intro-crystal svg{width:100%;height:100%;overflow:visible}
+.intro-crystal-shine{position:absolute;z-index:2;inset:5px 10px;background:linear-gradient(110deg,transparent 30%,#fff9 48%,transparent 62%);transform:translateX(-120%) skewX(-16deg);animation:introShine .8s ease-out .65s both}
+.intro-brand{position:relative;z-index:2;margin-top:24px;font:800 clamp(21px,5vw,27px) system-ui,sans-serif;letter-spacing:4px;text-shadow:0 0 22px #a56bff55;animation:introTextIn .65s ease .28s both}
+.intro-brand b{color:#c69cff;font-weight:900}
+.intro-tagline{position:relative;z-index:2;margin-top:9px;color:#a99abc;font:600 8px system-ui,sans-serif;letter-spacing:3px;animation:introTextIn .65s ease .48s both}
+.intro-progress{position:relative;z-index:2;width:112px;height:2px;margin-top:30px;overflow:hidden;border-radius:9px;background:#ffffff18;animation:introTextIn .4s ease .5s both}
+.intro-progress i{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,#9d68ff,#66eaff);box-shadow:0 0 10px #8f6cff;animation:introLoad 1.45s cubic-bezier(.55,.05,.25,1) .35s both}
+.intro-spark{position:absolute;z-index:2;width:4px;height:4px;border-radius:50%;background:#e7d6ff;box-shadow:0 0 12px 3px #a56bff99}
+.intro-spark-a{top:36%;left:calc(50% - 85px);animation:introTwinkle .9s ease-in-out infinite alternate}
+.intro-spark-b{top:48%;left:calc(50% + 93px);background:#8df4ff;animation:introTwinkle 1.1s ease-in-out .2s infinite alternate}
+.intro-spark-c{top:62%;left:calc(50% + 54px);width:3px;height:3px;animation:introTwinkle .75s ease-in-out .35s infinite alternate}
+@keyframes introTurn{to{transform:rotate(360deg)}}
+@keyframes introBreathe{from{transform:scale(.82);opacity:.65}to{transform:scale(1.12);opacity:1}}
+@keyframes introOrbit{to{rotate:360deg}}
+@keyframes introCrystalIn{from{opacity:0;transform:translateY(18px) scale(.65) rotate(-14deg)}to{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+@keyframes introFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes introShine{to{transform:translateX(150%) skewX(-16deg)}}
+@keyframes introTextIn{from{opacity:0;transform:translateY(9px);letter-spacing:7px}to{opacity:1;transform:translateY(0)}}
+@keyframes introLoad{to{transform:scaleX(1)}}
+@keyframes introTwinkle{from{opacity:.25;transform:scale(.6)}to{opacity:1;transform:scale(1.5)}}
+@media(prefers-reduced-motion:reduce){.intro-splash *{animation-duration:.01ms!important;animation-iteration-count:1!important}.intro-splash{transition:none}}
+@media(max-height:620px){.intro-crystal{width:72px;height:84px}.intro-brand{margin-top:15px}.intro-progress{margin-top:18px}}
