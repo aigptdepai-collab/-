@@ -188,3 +188,9 @@ body.home-active .footer { flex: 0 0 auto; margin-top: 10px; padding-top: 8px; f
 #achievements-open:active{transform:scale(.94)}
 .achievement-view #dialog-description{white-space:pre-line;text-align:right;line-height:2.15;max-height:min(48vh,360px);overflow-y:auto;padding:5px 3px;font-size:12px}
 .achievement-view .dialog h2{color:#ffe6a8;text-shadow:0 0 18px #ffca6a44}
+
+/* SMART HINTS: subtle highlight for the suggested move */
+#hint-button span{font-variant-numeric:tabular-nums}
+.tube.hint-pulse,.block-cell.hint-pulse{animation:smartHintPulse .55s ease-in-out 3;border-color:#ffe28b!important;box-shadow:0 0 0 2px #ffe28b55,0 0 20px #ffe28b88!important;position:relative;z-index:2}
+@keyframes smartHintPulse{0%,100%{filter:brightness(1);transform:scale(1)}50%{filter:brightness(1.7);transform:scale(1.07)}}
+@media(prefers-reduced-motion:reduce){.tube.hint-pulse,.block-cell.hint-pulse{animation:none!important;border-color:#ffe28b!important}}
