@@ -59,6 +59,18 @@ const STORE_ITEMS=[
  {id:"badge-master",type:"badge",name:"استاد رنگ‌ها",tag:"COLOR MASTER",desc:"نشان ویژه برای استادان معما",price:240,swatch:"rose",group:"نشان‌ها"}
 ];
 let storeFilter="همه";
+function openStorePreview(item,art){
+ const overlay=document.createElement("div");overlay.className="store-preview-backdrop";
+ const panel=document.createElement("section");panel.className="store-preview-panel";panel.setAttribute("role","dialog");panel.setAttribute("aria-modal","true");
+ const visual=art.cloneNode(true);visual.classList.add("store-preview-art");
+ const title=document.createElement("h2");title.textContent=item.name;
+ const desc=document.createElement("p");desc.textContent=item.desc;
+ const type=document.createElement("span");type.className="store-preview-type";type.textContent=item.group;
+ const close=document.createElement("button");close.type="button";close.className="store-preview-close";close.textContent="بستن";
+ close.addEventListener("click",()=>overlay.remove());
+ overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.remove();});
+ panel.append(visual,type,title,desc,close);overlay.append(panel);document.body.append(overlay);close.focus();
+}
 function renderStore(){
  const s=state.get(),grid=$("#store-grid");if(!grid)return;
  $("#store-gems").textContent=fa(s.gems);grid.innerHTML="";
@@ -68,8 +80,9 @@ function renderStore(){
  STORE_ITEMS.filter(item=>storeFilter==="همه"||item.group===storeFilter).forEach(item=>{
   const owned=s.ownedItems.includes(item.id),key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",effect:"equippedEffect",badge:"equippedBadge"}[item.type],equipped=s[key]===item.id;
   const card=document.createElement("article");card.className="store-item "+(equipped?"is-equipped":"");
-  const art=document.createElement("div");art.className="store-item-art art-"+item.swatch+" art-"+item.id;
-  art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><small>'+item.tag+'</small>';
+  const art=document.createElement("button");art.type="button";art.className="store-item-art preview-"+item.type+" art-"+item.swatch+" art-"+item.id;art.setAttribute("aria-label","پیش‌نمایش "+item.name);
+  art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><span class="preview-object" aria-hidden="true"></span><small>'+item.tag+'</small><b class="art-view-label">مشاهده</b>';
+  art.addEventListener("click",()=>openStorePreview(item,art));
   const info=document.createElement("div");info.className="store-item-info";
   const title=document.createElement("h3");title.textContent=item.name;
   const desc=document.createElement("p");desc.textContent=item.desc;
