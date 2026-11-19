@@ -41,6 +41,7 @@ function reverseScramble(colorCount,level){
  const first=rand(0,colorCount-1),split=rand(1,3);
  for(let i=0;i<split;i++)tubes[first+0].pop();
  tubes[colorCount].push(...Array(split).fill(first));
+ const initialSplitBoard=clone(tubes);
 
  const extra=Math.min(260,Math.round(8+colorCount*3.2+Math.min(level,220)*0.72));
  for(let step=0;step<extra;step++){
@@ -95,8 +96,10 @@ function reverseScramble(colorCount,level){
   const {from,to}=finish;
   while(tubes[from].length)tubes[to].push(tubes[from].pop());
  }else{
-  /* Safe fallback: retain a valid reverse-scrambled board, with at least
-     one empty tube; this branch is exceptionally rare. */
+  /* Guaranteed fallback: restore the initial split, then reunite its two
+     matching partial stacks. This preserves a valid board and two empty tubes. */
+  for(let i=0;i<tubes.length;i++)tubes[i]=initialSplitBoard[i].slice();
+  while(tubes[colorCount].length)tubes[first].push(tubes[colorCount].pop());
  }
  return tubes;
 }
