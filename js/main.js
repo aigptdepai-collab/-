@@ -33,34 +33,50 @@ function sfx(kind){
  };
  (notes[kind]||[]).forEach(([freq,duration,when,wave,volume])=>tone(freq,duration,when,wave,volume));
 }
-function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";document.body.dataset.effect=(s.equippedEffect||"none").replace("effect-","");}
+function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";document.body.dataset.effect=(s.equippedEffect||"none").replace("effect-","");document.body.dataset.tubeSkin=(s.equippedTubeSkin||"tube-glass").replace("tube-","");document.body.dataset.blockSkin=(s.equippedBlockSkin||"block-prism").replace("block-","");document.body.dataset.badge=(s.equippedBadge||"badge-none").replace("badge-","");}
 
 const STORE_ITEMS=[
- {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true},
- {id:"theme-aurora",type:"theme",name:"شفق قطبی",tag:"ATMOSPHERE",desc:"ترکیب فیروزه‌ای و سبز زمردی",price:90,swatch:"aurora"},
- {id:"theme-ember",type:"theme",name:"کهربای سلطنتی",tag:"GOLD EDITION",desc:"مشکی عمیق با جزئیات طلایی گرم",price:140,swatch:"ember"},
- {id:"theme-midnight",type:"theme",name:"آبی نیمه‌شب",tag:"NOCTURNE",desc:"آبی جوهری، آرام و بی‌نهایت شیک",price:180,swatch:"midnight"},
- {id:"theme-obsidian",type:"theme",name:"آبسیدین طلایی",tag:"PRESTIGE · LIMITED",desc:"ترکیب سنگ آتشفشانی و طلای شامپاینی",price:260,swatch:"obsidian"},
- {id:"theme-rose",type:"theme",name:"رز نوآر",tag:"ATELIER SERIES",desc:"زرشکی تیره با درخشش رزگلد",price:220,swatch:"rose"},
- {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"SIGNATURE EFFECT",desc:"رد نوری ظریف در لحظه انتقال رنگ",price:110,swatch:"prism"},
- {id:"effect-orbit",type:"effect",name:"هاله پیروزی",tag:"SIGNATURE EFFECT",desc:"درخشش ویژه هنگام ثبت یک پیروزی",price:160,swatch:"orbit"}
+ {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true,group:"تم‌ها"},
+ {id:"theme-aurora",type:"theme",name:"شفق قطبی",tag:"ATMOSPHERE",desc:"فیروزه‌ای و سبز زمردی",price:90,swatch:"aurora",group:"تم‌ها"},
+ {id:"theme-ember",type:"theme",name:"کهربای سلطنتی",tag:"GOLD EDITION",desc:"مشکی عمیق با جزئیات طلایی",price:140,swatch:"ember",group:"تم‌ها"},
+ {id:"theme-midnight",type:"theme",name:"آبی نیمه‌شب",tag:"NOCTURNE",desc:"آبی جوهری و آرام",price:180,swatch:"midnight",group:"تم‌ها"},
+ {id:"theme-obsidian",type:"theme",name:"آبسیدین طلایی",tag:"PRESTIGE",desc:"سنگ آتشفشانی و طلای شامپاینی",price:260,swatch:"obsidian",group:"تم‌ها"},
+ {id:"theme-rose",type:"theme",name:"رز نوآر",tag:"ATELIER",desc:"زرشکی تیره با رزگلد",price:220,swatch:"rose",group:"تم‌ها"},
+ {id:"tube-glass",type:"tube",name:"شیشه کریستالی",tag:"CLASSIC",desc:"شفافیت شیشه با لبه‌های صیقلی",price:0,swatch:"glass",owned:true,group:"پوسته لوله"},
+ {id:"tube-gold",type:"tube",name:"طلای برس‌خورده",tag:"GOLD CRAFT",desc:"لبه‌های فلزی طلایی و درخشش گرم",price:150,swatch:"gold",group:"پوسته لوله"},
+ {id:"tube-obsidian",type:"tube",name:"آبسیدین",tag:"BLACK LABEL",desc:"بدنه تیره و لبه‌های سنگی",price:190,swatch:"obsidian",group:"پوسته لوله"},
+ {id:"tube-frost",type:"tube",name:"یخ بلورین",tag:"FROST",desc:"شیشه سرد با هاله یخی",price:170,swatch:"frost",group:"پوسته لوله"},
+ {id:"tube-rose",type:"tube",name:"رزگلد",tag:"ROSE METAL",desc:"فلز رزگلد با انعکاس ظریف",price:210,swatch:"rose",group:"پوسته لوله"},
+ {id:"block-prism",type:"block",name:"منشور کلاسیک",tag:"DEFAULT",desc:"سطوح شفاف با نور منشوری",price:0,swatch:"prism",owned:true,group:"پوسته بلوک"},
+ {id:"block-marble",type:"block",name:"مرمر سلطنتی",tag:"MARBLE",desc:"بافت سنگی لوکس و رگه‌های روشن",price:130,swatch:"marble",group:"پوسته بلوک"},
+ {id:"block-metal",type:"block",name:"تیتانیوم",tag:"TITANIUM",desc:"سطح فلزی برس‌خورده و صنعتی",price:160,swatch:"metal",group:"پوسته بلوک"},
+ {id:"block-neon",type:"block",name:"نئون شب",tag:"AFTER DARK",desc:"لبه‌های نورانی روی زمینه تیره",price:180,swatch:"neon",group:"پوسته بلوک"},
+ {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"SIGNATURE EFFECT",desc:"درخشش رنگ‌ها هنگام انتقال",price:110,swatch:"prism",group:"افکت‌ها"},
+ {id:"effect-orbit",type:"effect",name:"هاله پیروزی",tag:"VICTORY FX",desc:"هاله طلایی برای لحظه‌های مهم",price:160,swatch:"orbit",group:"افکت‌ها"},
+ {id:"effect-pulse",type:"effect",name:"ضربان نور",tag:"PULSE FX",desc:"تپش نوری ظریف روی صفحه بازی",price:200,swatch:"pulse",group:"افکت‌ها"},
+ {id:"badge-none",type:"badge",name:"بدون نشان",tag:"DEFAULT",desc:"نمای ساده و مینیمال",price:0,swatch:"violet",owned:true,group:"نشان‌ها"},
+ {id:"badge-royal",type:"badge",name:"نشان سلطنتی",tag:"ROYAL CREST",desc:"نشان اختصاصی طلایی برای پروفایل",price:140,swatch:"gold",group:"نشان‌ها"},
+ {id:"badge-master",type:"badge",name:"استاد رنگ‌ها",tag:"COLOR MASTER",desc:"نشان ویژه برای استادان معما",price:240,swatch:"rose",group:"نشان‌ها"}
 ];
+let storeFilter="همه";
 function renderStore(){
  const s=state.get(),grid=$("#store-grid");if(!grid)return;
  $("#store-gems").textContent=fa(s.gems);grid.innerHTML="";
- STORE_ITEMS.forEach(item=>{
-  const owned=s.ownedItems.includes(item.id),equipped=item.type==="theme"?s.equippedTheme===item.id:s.equippedEffect===item.id;
+ const groups=["همه","تم‌ها","پوسته لوله","پوسته بلوک","افکت‌ها","نشان‌ها"];
+ let filters=$("#store-filters");
+ if(filters){filters.innerHTML="";groups.forEach(group=>{const b=document.createElement("button");b.type="button";b.className="store-filter"+(storeFilter===group?" active":"");b.textContent=group;b.addEventListener("click",()=>{storeFilter=group;renderStore();});filters.append(b);});}
+ STORE_ITEMS.filter(item=>storeFilter==="همه"||item.group===storeFilter).forEach(item=>{
+  const owned=s.ownedItems.includes(item.id),key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",effect:"equippedEffect",badge:"equippedBadge"}[item.type],equipped=s[key]===item.id;
   const card=document.createElement("article");card.className="store-item "+(equipped?"is-equipped":"");
-  const art=document.createElement("div");art.className="store-item-art art-"+item.swatch;
+  const art=document.createElement("div");art.className="store-item-art art-"+item.swatch+" art-"+item.id;
   art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><small>'+item.tag+'</small>';
   const info=document.createElement("div");info.className="store-item-info";
   const title=document.createElement("h3");title.textContent=item.name;
   const desc=document.createElement("p");desc.textContent=item.desc;
   const foot=document.createElement("div");foot.className="store-item-foot";
-  const price=document.createElement("span");price.className="item-price";price.textContent=item.price===0?"رایگان": "◆ "+fa(item.price);
+  const price=document.createElement("span");price.className="item-price";price.textContent=item.price===0?"رایگان":"◆ "+fa(item.price);
   const button=document.createElement("button");button.type="button";button.className="item-action"+(equipped?" equipped":"");
-  button.textContent=equipped?"فعال است":owned?"انتخاب":"بازگشایی";
-  button.disabled=equipped;
+  button.textContent=equipped?"فعال است":owned?"فعال‌سازی":"بازگشایی";button.disabled=equipped;
   button.addEventListener("click",()=>storeAction(item));
   foot.append(price,button);info.append(title,desc,foot);card.append(art,info);grid.append(card);
  });
@@ -68,11 +84,11 @@ function renderStore(){
 function storeAction(item){
  const s=state.get(),owned=s.ownedItems.includes(item.id);
  if(!owned){
-  if(s.gems<item.price){showModal("کریستال کافی نیست","هنوز به این آیتم نمی‌رسی","با حل مراحل مرتب‌سازی رنگ کریستال بیشتری جمع کن.",[{label:"متوجه شدم",primary:true}]);return;}
+  if(s.gems<item.price){showModal("کریستال کافی نیست","اعتبار کافی نداری","با حل مراحل بازی کریستال جمع کن و دوباره برگرد.",[{label:"متوجه شدم",primary:true}]);return;}
   state.update({gems:s.gems-item.price,ownedItems:[...s.ownedItems,item.id]});
  }
- if(item.type==="theme")state.update({equippedTheme:item.id});else state.update({equippedEffect:item.id});
- renderStore();renderHeader();sfx("select");
+ const key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",effect:"equippedEffect",badge:"equippedBadge"}[item.type];
+ state.update({[key]:item.id});renderStore();renderHeader();sfx("select");
 }
 function openStore(){
  document.body.classList.remove("game-active");document.body.classList.add("home-active","store-active");
@@ -94,7 +110,7 @@ function backHome(){store.hidden=true;document.body.classList.remove("game-activ
 function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").textContent=fa(moves);$("#best-value").textContent=fa(best);}
 function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
 function undo(){const h=history.pop();if(!h){setMessage("هنوز حرکتی برای برگشت وجود ندارد.");return;}score=h.score;moves=h.moves;if(h.mode==="liquid"){liquid=LiquidEngine.clone(h.tubes);selectedTube=null;renderLiquid();}else{block={board:BlockEngine.clone(h.board),pieces:h.pieces};selectedPiece=null;renderBlocks();}renderHud();setMessage("حرکت قبلی برگشت داده شد.");sfx("undo");}
-function renderLiquid(targetIndex=null,flowAmount=0,sourceIndex=null){liquidBoard.innerHTML="";liquid.forEach((tube,index)=>{const el=document.createElement("button");el.type="button";el.className="tube"+(!tube.length?" empty":"")+(selectedTube===index?" selected":"")+(targetIndex===index?" pour-target":"")+(sourceIndex===index?" pour-source":"");el.setAttribute("aria-label","لوله "+fa(index+1));tube.forEach((color,layerIndex)=>{const layer=document.createElement("span");layer.className="liquid-layer"+(targetIndex===index&&layerIndex>=tube.length-flowAmount?" flow-in":"");layer.style.background=LiquidEngine.COLORS[color];el.append(layer);});el.addEventListener("click",()=>tapTube(index));liquidBoard.append(el);});}
+function renderLiquid(targetIndex=null,flowAmount=0,sourceIndex=null){liquidBoard.innerHTML="";liquid.forEach((tube,index)=>{const el=document.createElement("button");el.type="button";el.className="tube skin-"+(state.get().equippedTubeSkin||"tube-glass").replace("tube-","")+(!tube.length?" empty":"")+(selectedTube===index?" selected":"")+(targetIndex===index?" pour-target":"")+(sourceIndex===index?" pour-source":"");el.setAttribute("aria-label","لوله "+fa(index+1));tube.forEach((color,layerIndex)=>{const layer=document.createElement("span");layer.className="liquid-layer"+(targetIndex===index&&layerIndex>=tube.length-flowAmount?" flow-in":"");layer.style.background=LiquidEngine.COLORS[color];el.append(layer);});el.addEventListener("click",()=>tapTube(index));liquidBoard.append(el);});}
 function animatePour(fromIndex,toIndex,color,onComplete){
  const source=liquidBoard.children[fromIndex],target=liquidBoard.children[toIndex];
  if(!source||!target){onComplete();return;}
@@ -124,7 +140,7 @@ function animatePour(fromIndex,toIndex,color,onComplete){
 }
 function tapTube(index){if(pourAnimating)return;if(selectedTube===null){if(!liquid[index].length){setMessage("اول یک لوله دارای مایع انتخاب کن.");return;}selectedTube=index;renderLiquid();setMessage("حالا لوله مقصد را انتخاب کن.");sfx("select");return;}if(selectedTube===index){selectedTube=null;renderLiquid();setMessage("انتخاب لغو شد.");return;}if(!LiquidEngine.canPour(liquid,selectedTube,index)){if(!liquid[index].length||liquid[index].at(-1)===liquid[selectedTube].at(-1)){setMessage("این حرکت امکان‌پذیر نیست.");sfx("error");return;}selectedTube=index;renderLiquid();setMessage("فقط روی رنگ مشابه یا لوله خالی بریز.");sound(170);return;}pushHistory();const result=LiquidEngine.pour(liquid,selectedTube,index);const fromIndex=selectedTube;const oldTubes=liquid;liquid=result.tubes;selectedTube=null;moves++;score+=result.amount*5;renderHud();sfx("pour");animatePour(fromIndex,index,result.color,()=>{renderLiquid(index,result.amount,fromIndex);pourAnimating=false;if(LiquidEngine.won(liquid))winLevel("liquid");else setMessage(fa(result.amount)+" واحد مایع جابه‌جا شد. ادامه بده!");});}
 function liquidHint(){for(let a=0;a<liquid.length;a++)for(let b=0;b<liquid.length;b++)if(LiquidEngine.canPour(liquid,a,b)){setMessage("راهنما: از لوله "+fa(a+1)+" به لوله "+fa(b+1)+" انتقال بده.");const els=liquidBoard.children;els[a].classList.add("selected");els[b].style.borderColor="#ffe28b";setTimeout(()=>{if(els[a])els[a].classList.remove("selected");if(els[b])els[b].style.borderColor="";},1300);return;}setMessage("حرکت مناسبی پیدا نشد؛ بازی را دوباره شروع کن.");}
-function renderBlocks(placedCells=[],clearingCells=[]){const placedSet=new Set(placedCells.map(([r,c])=>r+","+c)),clearingMap=new Map(clearingCells.map(([r,c,color])=>[r+","+c,color]));blockBoard.innerHTML="";for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement("button");cell.type="button";const key=r+","+c,clearing=clearingMap.has(key);cell.className="block-cell"+(block.board[r][c]?" filled":"")+(placedSet.has(key)?" placed":"")+(clearing?" clearing":"");cell.setAttribute("role","gridcell");if(block.board[r][c])cell.style.setProperty("--cell-color",block.board[r][c]);else if(clearing)cell.style.setProperty("--cell-color",clearingMap.get(key));cell.addEventListener("click",()=>placeSelected(r,c));blockBoard.append(cell);}tray.innerHTML="";block.pieces.forEach((piece,index)=>{const slot=document.createElement("button");slot.type="button";slot.className="piece-slot"+(piece.used?" used":"")+(selectedPiece===index?" selected":"");slot.setAttribute("aria-label","قطعه "+fa(index+1));if(!piece.used){const shape=document.createElement("span");shape.className="piece-shape";shape.style.gridTemplateColumns="repeat("+piece.shape[0].length+",17px)";shape.style.setProperty("--piece-color",piece.color);piece.shape.forEach(row=>row.forEach(v=>{const sq=document.createElement("i");sq.className="piece-square";sq.style.visibility=v?"visible":"hidden";shape.append(sq);}));slot.append(shape);}slot.addEventListener("click",()=>selectPiece(index));tray.append(slot);});}
+function renderBlocks(placedCells=[],clearingCells=[]){const placedSet=new Set(placedCells.map(([r,c])=>r+","+c)),clearingMap=new Map(clearingCells.map(([r,c,color])=>[r+","+c,color]));blockBoard.innerHTML="";for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement("button");cell.type="button";const key=r+","+c,clearing=clearingMap.has(key);cell.className="block-cell skin-"+(state.get().equippedBlockSkin||"block-prism").replace("block-","")+(block.board[r][c]?" filled":"")+(placedSet.has(key)?" placed":"")+(clearing?" clearing":"");cell.setAttribute("role","gridcell");if(block.board[r][c])cell.style.setProperty("--cell-color",block.board[r][c]);else if(clearing)cell.style.setProperty("--cell-color",clearingMap.get(key));cell.addEventListener("click",()=>placeSelected(r,c));blockBoard.append(cell);}tray.innerHTML="";block.pieces.forEach((piece,index)=>{const slot=document.createElement("button");slot.type="button";slot.className="piece-slot"+(piece.used?" used":"")+(selectedPiece===index?" selected":"");slot.setAttribute("aria-label","قطعه "+fa(index+1));if(!piece.used){const shape=document.createElement("span");shape.className="piece-shape";shape.style.gridTemplateColumns="repeat("+piece.shape[0].length+",17px)";shape.style.setProperty("--piece-color",piece.color);piece.shape.forEach(row=>row.forEach(v=>{const sq=document.createElement("i");sq.className="piece-square";sq.style.visibility=v?"visible":"hidden";shape.append(sq);}));slot.append(shape);}slot.addEventListener("click",()=>selectPiece(index));tray.append(slot);});}
 function selectPiece(i){if(block.pieces[i].used)return;selectedPiece=i;renderBlocks();setMessage("حالا محل قرارگیری قطعه را روی صفحه لمس کن.");sfx("select");}
 function placeSelected(r,c){if(blockAnimating)return;if(selectedPiece===null){setMessage("اول یکی از قطعه‌های پایین صفحه را انتخاب کن.");return;}const p=block.pieces[selectedPiece],result=BlockEngine.place(block.board,p,r,c);if(!result){setMessage("این قطعه در این محل جا نمی‌شود.");sound(160);return;}pushHistory();const placedCells=[],clearingCells=result.clearCells.map(([y,x])=>[y,x,block.board[y][x]]);for(let y=0;y<8;y++)for(let x=0;x<8;x++)if(!block.board[y][x]&&result.board[y][x])placedCells.push([y,x]);block.board=result.board;p.used=true;moves++;score+=result.points;if(result.cleared){score+=result.cleared*10;const current=state.get();state.update({stats:{...current.stats,blockClears:current.stats.blockClears+result.cleared}});setMessage("عالیه! ردیف‌ها و ستون‌ها در حال انفجارند.");sfx("clear");}else setMessage("قطعه با موفقیت قرار گرفت.");selectedPiece=null;if(block.pieces.every(x=>x.used))block.pieces=BlockEngine.newPieces();renderBlocks(placedCells,clearingCells);renderHud();if(result.cleared){blockAnimating=true;setTimeout(()=>{renderBlocks();blockAnimating=false;if(!BlockEngine.anyMove(block.board,block.pieces))endBlocks();},520);}else if(!BlockEngine.anyMove(block.board,block.pieces)){endBlocks();return;}if(!result.cleared)sfx("place");}
 function winLevel(which){const reward=35+level*5;if(which==="liquid"){const current=state.get();state.update({stats:{...current.stats,liquidWins:current.stats.liquidWins+1}});}state.update({gems:state.get().gems+reward,level:level+1});renderHeader();showModal("مرحله کامل شد ✦","درخشان بود!","معما را حل کردی و "+fa(reward)+" کریستال به دست آوردی.",[{label:"مرحله بعدی",primary:true,action:()=>startGame(which)},{label:"صفحه اصلی",action:backHome}],"win");sfx("win");}
