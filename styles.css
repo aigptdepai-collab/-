@@ -194,3 +194,168 @@ body.home-active .footer { flex: 0 0 auto; margin-top: 10px; padding-top: 8px; f
 .tube.hint-pulse,.block-cell.hint-pulse{animation:smartHintPulse .55s ease-in-out 3;border-color:#ffe28b!important;box-shadow:0 0 0 2px #ffe28b55,0 0 20px #ffe28b88!important;position:relative;z-index:2}
 @keyframes smartHintPulse{0%,100%{filter:brightness(1);transform:scale(1)}50%{filter:brightness(1.7);transform:scale(1.07)}}
 @media(prefers-reduced-motion:reduce){.tube.hint-pulse,.block-cell.hint-pulse{animation:none!important;border-color:#ffe28b!important}}
+
+
+/* CHROMA QUEST HOME REFRESH — crystal violet + neon mode cards */
+body.home-active{
+  background:
+    radial-gradient(ellipse at 50% 24%,#39206b55 0,transparent 42%),
+    radial-gradient(ellipse at 8% 78%,#1b6b9b20 0,transparent 34%),
+    linear-gradient(180deg,#090615 0%,#0b081b 48%,#080713 100%);
+}
+body.home-active .ambient{opacity:.28;filter:blur(88px)}
+body.home-active .topbar{
+  position:relative;z-index:4;padding:0 12px;border:1px solid #c4a5ff20;
+  border-radius:17px;background:linear-gradient(110deg,#ffffff0c,#ffffff03);
+  box-shadow:0 8px 30px #0004,inset 0 1px #ffffff0b;backdrop-filter:blur(14px)
+}
+body.home-active .brand-mark{
+  width:41px;height:41px;border-radius:14px;
+  background:linear-gradient(145deg,#c28aff 0%,#7845d5 48%,#252052 100%);
+  box-shadow:0 0 12px #a56bff88,0 0 30px #854bff55,inset 0 1px #fff9;
+  border-color:#e0c8ff99
+}
+body.home-active .brand-name{font-size:14px;letter-spacing:1.7px;text-shadow:0 0 18px #a56bff44}
+body.home-active .currency-pill,body.home-active .icon-button{
+  background:linear-gradient(145deg,#ffffff12,#ffffff04);border-color:#c7a8ff30;
+  box-shadow:inset 0 1px #ffffff0b
+}
+body.home-active .hero{
+  isolation:isolate;border:1px solid #b99aff20;border-radius:28px;margin-top:12px;
+  padding:12px 15px 10px;
+  background:
+    radial-gradient(ellipse at 72% 36%,#854bff20,transparent 42%),
+    linear-gradient(145deg,#17102bdb,#0d0a1cdb 72%);
+  box-shadow:0 18px 48px #0005,inset 0 1px #ffffff12;
+  overflow:hidden
+}
+body.home-active .hero:before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.55;
+  background:linear-gradient(115deg,transparent 12%,#b78aff09 48%,transparent 75%);
+}
+body.home-active .hero-copy{padding:12px 4px 0 0}
+body.home-active .hero .eyebrow{
+  display:inline-flex;padding:6px 10px;border:1px solid #9f7aff3d;border-radius:99px;
+  background:#8e5aff12;font-size:10px;letter-spacing:.1px
+}
+body.home-active .hero h1{font-size:clamp(27px,6vw,43px);line-height:1.38;text-shadow:0 5px 24px #0008}
+body.home-active .hero h1 span{
+  background:linear-gradient(100deg,#e2c9ff 5%,#ad83ff 48%,#70eaff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 13px #9d6aff55);text-shadow:none
+}
+body.home-active .hero-description{max-width:255px;color:#c0b8dc;font-size:11px;line-height:1.9}
+body.home-active .core-stage{filter:drop-shadow(0 12px 28px #7142d655)}
+body.home-active .core-glow{
+  width:58%;height:58%;background:radial-gradient(circle,#a56bff88 0,#7444d955 42%,transparent 72%);
+  filter:blur(26px)
+}
+body.home-active .prism{width:min(88%,250px);filter:drop-shadow(0 0 12px #b28affaa) drop-shadow(0 0 34px #6c49ff77)}
+body.home-active .orbit{border-color:#b58aff45;box-shadow:0 0 12px #a56bff12}
+body.home-active .orbit-b{border-color:#55eaff40}
+body.home-active .orbit-c{border-color:#d5a5ff40}
+body.home-active .core-caption{
+  bottom:0;padding:5px 12px;border:1px solid #b99aff35;border-radius:99px;
+  background:#100b24bb;color:#e2d6ff;font-size:8px;letter-spacing:2.5px;
+  box-shadow:0 0 18px #9861ff22
+}
+body.home-active .hero-bottom{gap:7px}
+body.home-active .chapter-label{
+  padding:5px 11px;border:1px solid #a98bff28;border-radius:99px;
+  background:#ffffff08;color:#c3b8e4
+}
+body.home-active .chapter-label strong{color:#8feeff;text-shadow:0 0 12px #4de7ff55}
+body.home-active .primary-button{
+  min-height:49px;border-radius:15px;border:1px solid #dfc8ff99;
+  background:linear-gradient(105deg,#6632c6 0%,#9855ef 48%,#3e8bd7 100%);
+  box-shadow:0 8px 26px #7b42db66,0 0 28px #7b42db22,inset 0 1px #ffffff70;
+  letter-spacing:.1px
+}
+body.home-active .primary-button:after{
+  content:"";position:absolute;top:-80%;bottom:-80%;left:-35%;width:24%;
+  transform:rotate(22deg);background:linear-gradient(90deg,transparent,#ffffff35,transparent);
+  animation:homeButtonShine 5.5s ease-in-out infinite;pointer-events:none
+}
+@keyframes homeButtonShine{0%,65%{left:-35%}100%{left:125%}}
+body.home-active .quick-stats{gap:8px}
+body.home-active .stat-card{
+  position:relative;min-width:0;border-radius:15px;border-color:#b99aff2c;
+  background:linear-gradient(145deg,#21183bdb,#111022e8);
+  box-shadow:0 8px 20px #0003,inset 0 1px #ffffff0c
+}
+body.home-active .stat-card:after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(120deg,#ffffff08,transparent 45%)
+}
+body.home-active .stat-icon{box-shadow:0 0 16px #a56bff22}
+body.home-active .stat-card strong{color:#f5efff}
+body.home-active .modes-section{position:relative}
+body.home-active .section-heading{padding:0 3px}
+body.home-active .section-heading h2{font-size:17px;letter-spacing:-.2px}
+body.home-active .section-number{color:#8c82ad}
+body.home-active .mode-grid{gap:10px}
+body.home-active .mode-card{
+  min-width:0;min-height:112px;padding:9px 11px;border-radius:19px;
+  border:1px solid #b99aff45;
+  background:
+    radial-gradient(ellipse at 50% 0%,#a56bff24,transparent 68%),
+    linear-gradient(145deg,#21153c,#100e22 76%);
+  box-shadow:0 10px 24px #0005,inset 0 1px #ffffff15;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease
+}
+body.home-active .mode-card:before{
+  content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(120deg,#ffffff0c,transparent 42%)
+}
+body.home-active .mode-card:active{transform:scale(.975)}
+body.home-active .liquid-card{border-color:#b47cff77;box-shadow:0 8px 25px #8a4bff20,inset 0 1px #ffffff18}
+body.home-active .block-card{
+  border-color:#55dff477;
+  background:radial-gradient(ellipse at 50% 0%,#3bbfe52b,transparent 68%),linear-gradient(145deg,#102b40,#0e1125 76%);
+  box-shadow:0 8px 25px #26b9e51a,inset 0 1px #ffffff18
+}
+body.home-active .mode-art{height:49px;position:relative;z-index:1}
+body.home-active .tubes-art i{filter:drop-shadow(0 0 7px #a56bff99);border-color:#e0d7ff}
+body.home-active .blocks-art i{filter:drop-shadow(0 0 7px currentColor)}
+body.home-active .mode-info,body.home-active .mode-arrow{position:relative;z-index:1}
+body.home-active .mode-info strong{font-size:12px}
+body.home-active .mode-info small{font-size:8px;color:#b9b0d3}
+body.home-active .liquid-card .mode-arrow{color:#d2aaff}
+body.home-active .block-card .mode-arrow{color:#75eaff}
+body.home-active .footer{border-color:#b99aff20;color:#8d85a9}
+body.home-active .footer span:first-child{color:#c5b5eb}
+@media(min-width:700px){
+ body.home-active .app-shell{width:min(100% - 48px,960px)}
+ body.home-active .hero{padding:18px 34px 14px}
+ body.home-active .hero-copy{padding-top:26px}
+ body.home-active .core-stage{height:clamp(190px,31dvh,255px)}
+ body.home-active .mode-card{min-height:126px;padding:12px 16px}
+ body.home-active .mode-art{height:57px}
+}
+@media(max-width:520px){
+ body.home-active .hero{padding:8px 10px 9px;border-radius:23px}
+ body.home-active .hero-copy{padding-top:12px}
+ body.home-active .hero .eyebrow{font-size:9px;padding:5px 8px}
+ body.home-active .hero h1{font-size:clamp(25px,6.1vw,34px)}
+ body.home-active .core-stage{height:clamp(145px,26dvh,205px)}
+ body.home-active .orbit-a{width:175px;height:69px}
+ body.home-active .orbit-b{width:195px;height:86px}
+ body.home-active .orbit-c{width:150px;height:150px}
+ body.home-active .quick-stats{gap:6px}
+ body.home-active .stat-card{padding:5px 6px}
+ body.home-active .mode-card{min-height:100px;padding:7px 9px}
+ body.home-active .mode-art{height:43px}
+}
+@media(max-height:700px){
+ body.home-active .hero{margin-top:8px}
+ body.home-active .hero-copy{padding-top:6px}
+ body.home-active .hero .eyebrow{margin-bottom:5px}
+ body.home-active .core-stage{height:clamp(125px,22dvh,165px)}
+ body.home-active .hero-bottom{gap:5px}
+ body.home-active .primary-button{min-height:43px}
+ body.home-active .mode-card{min-height:88px}
+ body.home-active .mode-art{height:36px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.home-active .primary-button:after{animation:none}
+}
