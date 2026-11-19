@@ -13,7 +13,7 @@
 <main class="app-shell">
 <header class="topbar">
 <a class="wordmark" href="#" id="home-link"><span class="brand-mark">C<span>Q</span></span><span class="brand-name">CHROMA <b>QUEST</b></span></a>
-<div class="top-actions"><div class="currency-pill"><span class="currency-gem">◆</span><strong id="gem-count">120</strong></div><button class="icon-button" id="achievements-open" aria-label="دستاوردها" title="دستاوردها">🏆</button><button class="icon-button" id="sound-toggle" aria-label="تغییر صدا">♫</button><button class="icon-button" id="settings-open" aria-label="تنظیمات">⚙</button></div>
+<div class="top-actions"><div class="currency-pill"><span class="currency-gem">◆</span><strong id="gem-count">120</strong></div><button class="icon-button" id="sound-toggle" aria-label="تغییر صدا">♫</button><button class="icon-button" id="settings-open" aria-label="تنظیمات">⚙</button></div>
 </header>
 <section id="home-screen">
 <section class="hero">
@@ -37,6 +37,20 @@
 <p class="game-message" id="game-message" aria-live="polite">یک حرکت انجام بده تا شروع کنیم.</p>
 </section>
 </main>
+<nav class="bottom-nav" aria-label="منوی اصلی">
+  <button class="nav-item nav-store" id="store-nav" type="button" aria-label="فروشگاه">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5 4.7 4h14.6L21 9.5M5 10v10h14V10M3 9.5a2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0 2.5 2.5 0 0 0 5 0M9 20v-5h6v5"/></svg>
+    <span>فروشگاه</span>
+  </button>
+  <button class="nav-item nav-home active" id="home-nav" type="button" aria-label="خانه" aria-current="page">
+    <span class="home-nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>
+    <span>خانه</span>
+  </button>
+  <button class="nav-item nav-achievements" id="achievements-nav" type="button" aria-label="دستاوردها">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4m-4 0v5m-4 3h8m-7-3h6v3H9z"/></svg>
+    <span>دستاوردها</span>
+  </button>
+</nav>
 <div class="modal-backdrop" id="modal-backdrop" hidden><section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><button class="dialog-close" id="dialog-close">×</button><p class="eyebrow" id="dialog-kicker">CHROMA QUEST</p><h2 id="dialog-title">آماده شروعی؟</h2><p id="dialog-description">مسیر معمایی خودت را انتخاب کن.</p><div class="dialog-actions" id="dialog-actions"></div></section></div>
 <script src="js/state.js"></script><script src="js/liquid.js"></script><script src="js/blocks.js"></script><script src="js/main.js"></script>
 </body></html>
