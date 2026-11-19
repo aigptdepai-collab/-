@@ -96,10 +96,13 @@ function reverseScramble(colorCount,level){
   const {from,to}=finish;
   while(tubes[from].length)tubes[to].push(tubes[from].pop());
  }else{
-  /* Guaranteed fallback: restore the initial split, then reunite its two
-     matching partial stacks. This preserves a valid board and two empty tubes. */
-  for(let i=0;i<tubes.length;i++)tubes[i]=initialSplitBoard[i].slice();
-  while(tubes[colorCount].length)tubes[first].push(tubes[colorCount].pop());
+  /* Guaranteed fallback: a small, solvable two-color arrangement with
+     exactly two empty tubes, rather than an already-completed board. */
+  tubes.length=0;
+  for(let color=0;color<colorCount;color++)tubes.push([color,color,color,color]);
+  tubes[0]=[0,0,0,1];
+  tubes[1]=[1,1,1,0];
+  tubes.push([],[]);
  }
  return tubes;
 }
