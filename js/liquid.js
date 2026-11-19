@@ -51,14 +51,13 @@ function reverseScramble(colorCount,level){
    const color=tubes[from][tubes[from].length-1];
    let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
    for(let to=0;to<colorCount+2;to++){
-    if(to===from||!tubes[to].length||tubes[to].length>=4)continue;
+    if(to===from||!tubes[to].length||tubes[to].length>=4||tubes[to].at(-1)===color)continue;
     const cap=Math.min(run,tubes[to].length?4-tubes[to].length:4,tubes[from].length-1);
     if(cap>0)moves.push({from,to,color,cap,contrast:tubes[to][tubes[to].length-1]!==color});
    }
   }
   if(!moves.length)break;
-  const contrasting=moves.filter(m=>m.contrast);
-  const pool=contrasting.length?contrasting:moves;
+  const pool=moves;
   const move=pool[rand(0,pool.length-1)];
   const amount=rand(1,move.cap);
   for(let k=0;k<amount;k++)tubes[move.to].push(tubes[move.from].pop());
@@ -72,7 +71,7 @@ function reverseScramble(colorCount,level){
    const a=tubes[from];
    if(!a.length||a.length>4||!a.every(x=>x===a[0]))continue;
    for(let to=0;to<colorCount+2;to++){
-    if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4){finish={from,to};break;}
+    if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4&&tubes[to].at(-1)!==a[0]){finish={from,to};break;}
    }
   }
   if(finish)break;
@@ -82,7 +81,7 @@ function reverseScramble(colorCount,level){
    const color=tubes[from].at(-1);
    let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
    for(let to=0;to<colorCount+2;to++){
-    if(to!==from&&tubes[to].length>0&&tubes[to].length<4){
+    if(to!==from&&tubes[to].length>0&&tubes[to].length<4&&tubes[to].at(-1)!==color){
      const amount=Math.min(run,tubes[from].length-1,4-tubes[to].length);
      if(amount>0)donors.push({from,to,amount});
     }
