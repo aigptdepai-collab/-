@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "chroma-quest-state-v1";
-  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedEffect:"effect-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
+  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedEffect:"effect-none",equippedTubeSkin:"tube-glass",equippedBlockSkin:"block-prism",equippedBadge:"badge-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
   function read(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
@@ -16,6 +16,9 @@
         ownedItems:Array.isArray(saved.ownedItems)?saved.ownedItems.filter(x=>typeof x==="string"):["theme-violet"],
         equippedTheme:typeof saved.equippedTheme==="string"?saved.equippedTheme:"theme-violet",
         equippedEffect:typeof saved.equippedEffect==="string"?saved.equippedEffect:"effect-none",
+        equippedTubeSkin:typeof saved.equippedTubeSkin==="string"?saved.equippedTubeSkin:"tube-glass",
+        equippedBlockSkin:typeof saved.equippedBlockSkin==="string"?saved.equippedBlockSkin:"block-prism",
+        equippedBadge:typeof saved.equippedBadge==="string"?saved.equippedBadge:"badge-none",
         stats:{
           liquidWins:Number.isFinite(saved.stats?.liquidWins)?Math.max(0,saved.stats.liquidWins):0,
           blockRuns:Number.isFinite(saved.stats?.blockRuns)?Math.max(0,saved.stats.blockRuns):0,
