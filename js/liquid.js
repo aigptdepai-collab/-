@@ -72,7 +72,7 @@ function reverseScramble(colorCount,level){
    const a=tubes[from];
    if(!a.length||a.length>4||!a.every(x=>x===a[0]))continue;
    for(let to=0;to<colorCount+2;to++){
-    if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4&&tubes[to].at(-1)!==a[0]){finish={from,to};break;}
+    if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4){finish={from,to};break;}
    }
   }
   if(finish)break;
