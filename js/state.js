@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "chroma-quest-state-v1";
-  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
+  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
   function read(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
@@ -13,6 +13,8 @@
         level:Number.isFinite(saved.level)?Math.max(1,saved.level):defaults.level,
         sound:typeof saved.sound==="boolean"?saved.sound:defaults.sound,
         selectedMode:["liquid","blocks"].includes(saved.selectedMode)?saved.selectedMode:null,
+        ownedItems:Array.isArray(saved.ownedItems)?saved.ownedItems.filter(x=>typeof x==="string"):["theme-violet"],
+        equippedTheme:typeof saved.equippedTheme==="string"?saved.equippedTheme:"theme-violet",
         stats:{
           liquidWins:Number.isFinite(saved.stats?.liquidWins)?Math.max(0,saved.stats.liquidWins):0,
           blockRuns:Number.isFinite(saved.stats?.blockRuns)?Math.max(0,saved.stats.blockRuns):0,
