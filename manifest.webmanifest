@@ -1,0 +1,21 @@
+{
+  "name": "CHROMA QUEST",
+  "short_name": "CHROMA",
+  "description": "ماجراجویی فکری در دنیای رنگ‌ها",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080713",
+  "theme_color": "#080713",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
