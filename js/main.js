@@ -33,21 +33,23 @@ function sfx(kind){
  };
  (notes[kind]||[]).forEach(([freq,duration,when,wave,volume])=>tone(freq,duration,when,wave,volume));
 }
-function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
+function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";document.body.dataset.effect=(s.equippedEffect||"none").replace("effect-","");}
 
 const STORE_ITEMS=[
  {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true},
  {id:"theme-aurora",type:"theme",name:"شفق قطبی",tag:"ATMOSPHERE",desc:"ترکیب فیروزه‌ای و سبز زمردی",price:90,swatch:"aurora"},
- {id:"theme-ember",type:"theme",name:"کهربای عمیق",tag:"SIGNATURE",desc:"درخشش گرم با رگه‌های طلایی",price:140,swatch:"ember"},
- {id:"theme-midnight",type:"theme",name:"نیمه‌شب",tag:"NOCTURNE",desc:"آبی جوهری با نورهای سرد",price:180,swatch:"midnight"},
- {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"VISUAL EFFECT",desc:"درخشش ظریف هنگام حرکت و امتیاز",price:110,swatch:"prism"},
- {id:"effect-orbit",type:"effect",name:"مدار نور",tag:"VISUAL EFFECT",desc:"هاله‌ای پویا برای لحظه‌های ویژه",price:160,swatch:"orbit"}
+ {id:"theme-ember",type:"theme",name:"کهربای سلطنتی",tag:"GOLD EDITION",desc:"مشکی عمیق با جزئیات طلایی گرم",price:140,swatch:"ember"},
+ {id:"theme-midnight",type:"theme",name:"آبی نیمه‌شب",tag:"NOCTURNE",desc:"آبی جوهری، آرام و بی‌نهایت شیک",price:180,swatch:"midnight"},
+ {id:"theme-obsidian",type:"theme",name:"آبسیدین طلایی",tag:"PRESTIGE · LIMITED",desc:"ترکیب سنگ آتشفشانی و طلای شامپاینی",price:260,swatch:"obsidian"},
+ {id:"theme-rose",type:"theme",name:"رز نوآر",tag:"ATELIER SERIES",desc:"زرشکی تیره با درخشش رزگلد",price:220,swatch:"rose"},
+ {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"SIGNATURE EFFECT",desc:"رد نوری ظریف در لحظه انتقال رنگ",price:110,swatch:"prism"},
+ {id:"effect-orbit",type:"effect",name:"هاله پیروزی",tag:"SIGNATURE EFFECT",desc:"درخشش ویژه هنگام ثبت یک پیروزی",price:160,swatch:"orbit"}
 ];
 function renderStore(){
  const s=state.get(),grid=$("#store-grid");if(!grid)return;
  $("#store-gems").textContent=fa(s.gems);grid.innerHTML="";
  STORE_ITEMS.forEach(item=>{
-  const owned=s.ownedItems.includes(item.id),equipped=s.equippedTheme===item.id;
+  const owned=s.ownedItems.includes(item.id),equipped=item.type==="theme"?s.equippedTheme===item.id:s.equippedEffect===item.id;
   const card=document.createElement("article");card.className="store-item "+(equipped?"is-equipped":"");
   const art=document.createElement("div");art.className="store-item-art art-"+item.swatch;
   art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><small>'+item.tag+'</small>';
@@ -57,8 +59,8 @@ function renderStore(){
   const foot=document.createElement("div");foot.className="store-item-foot";
   const price=document.createElement("span");price.className="item-price";price.textContent=item.price===0?"رایگان": "◆ "+fa(item.price);
   const button=document.createElement("button");button.type="button";button.className="item-action"+(equipped?" equipped":"");
-  button.textContent=equipped?"فعال است":(item.type==="effect"&&owned)?"در مجموعه":owned?"انتخاب":"بازگشایی";
-  button.disabled=equipped||(item.type==="effect"&&owned);
+  button.textContent=equipped?"فعال است":owned?"انتخاب":"بازگشایی";
+  button.disabled=equipped;
   button.addEventListener("click",()=>storeAction(item));
   foot.append(price,button);info.append(title,desc,foot);card.append(art,info);grid.append(card);
  });
@@ -69,7 +71,7 @@ function storeAction(item){
   if(s.gems<item.price){showModal("کریستال کافی نیست","هنوز به این آیتم نمی‌رسی","با حل مراحل مرتب‌سازی رنگ کریستال بیشتری جمع کن.",[{label:"متوجه شدم",primary:true}]);return;}
   state.update({gems:s.gems-item.price,ownedItems:[...s.ownedItems,item.id]});
  }
- if(item.type==="theme")state.update({equippedTheme:item.id});
+ if(item.type==="theme")state.update({equippedTheme:item.id});else state.update({equippedEffect:item.id});
  renderStore();renderHeader();sfx("select");
 }
 function openStore(){
