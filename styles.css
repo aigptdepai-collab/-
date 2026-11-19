@@ -410,3 +410,60 @@ body.home-active .app-shell{height:auto;min-height:100dvh;overflow:visible;paddi
  .home-nav-icon{width:44px;height:44px}
 }
 @media(prefers-reduced-motion:reduce){.nav-item{transition:none}}
+
+
+/* CHROMA QUEST — premium crystal store */
+body.store-active{overflow-x:hidden;overflow-y:auto;padding-bottom:calc(105px + env(safe-area-inset-bottom))}
+body.store-active .app-shell{height:auto;min-height:100dvh;overflow:visible;padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+.store-screen{padding:12px 0 24px;animation:storeReveal .35s ease both}
+@keyframes storeReveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.store-heading{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;margin:6px 0 22px}
+.store-back{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:#ffffff09;color:#e8dcff;font-size:20px}
+.store-heading .eyebrow{margin-bottom:3px;font:700 9px system-ui;letter-spacing:2px}
+.store-heading h1{margin:0;font-size:22px;font-weight:900}
+.store-subtitle{margin:4px 0 0;color:#a9a1c5;font-size:10px}
+.store-wallet{display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid #6edff54a;border-radius:13px;background:linear-gradient(135deg,#15364a99,#17112c);color:#e9faff;font-size:13px}
+.store-wallet span{color:#70eaff;text-shadow:0 0 12px #4de7ff}
+.store-feature{position:relative;overflow:hidden;min-height:164px;padding:22px 20px;border:1px solid #b38aff55;border-radius:22px;background:radial-gradient(ellipse at 82% 50%,#8a54ef38,transparent 42%),linear-gradient(115deg,#21163a,#111326 72%);box-shadow:0 14px 34px #0005,inset 0 1px #ffffff16}
+.feature-copy{position:relative;z-index:2;max-width:75%}
+.feature-kicker{font:700 8px system-ui;letter-spacing:2px;color:#8feaff}
+.feature-copy h2{font-size:18px;margin:9px 0 5px;line-height:1.7}
+.feature-copy p{font-size:10px;line-height:2;color:#b7afcf;margin:0}
+.feature-prism{position:absolute;left:5%;top:15px;width:105px;height:130px;display:grid;place-items:center;filter:drop-shadow(0 0 22px #a56bff77)}
+.feature-prism span{position:absolute;width:115px;height:48px;border:1px solid #9b7aff55;border-radius:50%;transform:rotate(-30deg)}
+.feature-prism i{width:46px;height:86px;clip-path:polygon(50% 0,100% 28%,78% 85%,50% 100%,20% 85%,0 28%);background:linear-gradient(125deg,#e6caff,#9259f0 42%,#52dcf2 78%,#4936b8);border:1px solid #fff8;box-shadow:inset -9px -4px 20px #17103e88}
+.store-section-head{display:flex;align-items:end;justify-content:space-between;margin:28px 2px 13px}
+.store-section-head .eyebrow{font:700 8px system-ui;letter-spacing:1.7px;margin-bottom:3px}
+.store-section-head h2{margin:0;font-size:16px}
+.store-count{font-size:9px;color:#8882a5}
+.store-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.store-item{min-width:0;overflow:hidden;border:1px solid #b99aff30;border-radius:18px;background:linear-gradient(145deg,#1b1630,#100e20);box-shadow:0 8px 20px #0004,inset 0 1px #ffffff0c;transition:transform .2s,border-color .2s}
+.store-item.is-equipped{border-color:#72e5f488;box-shadow:0 0 20px #4de7ff14,inset 0 1px #ffffff18}
+.store-item-art{height:112px;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 55%,#8e5aff35,transparent 54%),linear-gradient(145deg,#21183b,#101020)}
+.store-item-art:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,#ffffff0b,transparent 48%)}
+.store-item-art small{position:absolute;right:10px;top:9px;font:700 7px system-ui;letter-spacing:1.2px;color:#c9b9ed}
+.art-orbit{position:absolute;width:105px;height:42px;border:1px solid #b28aff77;border-radius:50%;transform:rotate(-28deg);box-shadow:0 0 13px #a56bff22}
+.art-crystal{position:relative;width:31px;height:58px;clip-path:polygon(50% 0,100% 28%,78% 85%,50% 100%,20% 85%,0 28%);background:linear-gradient(125deg,#f0d9ff,#a56bff 42%,#4de7ff 82%);filter:drop-shadow(0 0 12px #a56bff)}
+.art-aurora{background:radial-gradient(circle at 50%,#42e8cf38,transparent 58%),linear-gradient(145deg,#102d35,#101020)}
+.art-aurora .art-crystal{background:linear-gradient(125deg,#c5fff0,#35d9c2 48%,#387bdb)}
+.art-aurora .art-orbit{border-color:#59efcf88}
+.art-ember{background:radial-gradient(circle at 50%,#ffae4733,transparent 58%),linear-gradient(145deg,#38251e,#101020)}
+.art-ember .art-crystal{background:linear-gradient(125deg,#fff0bd,#e8a34b 48%,#a94467)}
+.art-ember .art-orbit{border-color:#f5b46b88}
+.art-midnight{background:radial-gradient(circle at 50%,#4a8dff35,transparent 58%),linear-gradient(145deg,#14233d,#101020)}
+.art-midnight .art-crystal{background:linear-gradient(125deg,#d6edff,#568ce8 48%,#433c9e)}
+.art-midnight .art-orbit{border-color:#75b5ff88}
+.art-prism .art-crystal{transform:rotate(18deg);filter:drop-shadow(0 0 17px #a56bff)}
+.art-orbit .art-orbit{width:125px;height:58px;border-color:#64e9ff;box-shadow:0 0 20px #4de7ff55}
+.art-orbit .art-crystal{opacity:.7}
+.store-item-info{padding:11px}
+.store-item-info h3{font-size:12px;margin:0 0 4px}
+.store-item-info p{min-height:34px;font-size:9px;line-height:1.8;color:#9e97b9;margin:0}
+.store-item-foot{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:10px;padding-top:9px;border-top:1px solid #ffffff10}
+.item-price{font-size:10px;color:#8ceaff;font-weight:800;white-space:nowrap}
+.item-action{border:1px solid #a77cff77;border-radius:10px;padding:7px 9px;background:linear-gradient(110deg,#6036a7,#493a8e);color:#fff;font:700 9px "Vazirmatn",sans-serif;white-space:nowrap}
+.item-action.equipped{border-color:#65ddeb66;background:#163443;color:#9cf1ff}
+.item-action:disabled{opacity:1}
+.store-footnote{text-align:center;color:#77718f;font-size:9px;line-height:1.9;margin:18px 5px 0}
+@media(min-width:700px){.store-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.store-item-art{height:140px}.store-feature{min-height:185px;padding:28px 26px}.feature-prism{left:10%;transform:scale(1.15)}}
+@media(max-width:380px){.store-heading{gap:7px}.store-heading h1{font-size:19px}.store-wallet{padding:8px}.store-item-info{padding:9px}.item-action{padding:6px 7px}}
