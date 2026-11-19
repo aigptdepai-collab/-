@@ -33,7 +33,7 @@ function sfx(kind){
  };
  (notes[kind]||[]).forEach(([freq,duration,when,wave,volume])=>tone(freq,duration,when,wave,volume));
 }
-function renderHeader(){const s=state.get();$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
+function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";}
 
 const STORE_ITEMS=[
  {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true},
@@ -57,8 +57,8 @@ function renderStore(){
   const foot=document.createElement("div");foot.className="store-item-foot";
   const price=document.createElement("span");price.className="item-price";price.textContent=item.price===0?"رایگان": "◆ "+fa(item.price);
   const button=document.createElement("button");button.type="button";button.className="item-action"+(equipped?" equipped":"");
-  button.textContent=equipped?"فعال است":owned?"انتخاب": "بازگشایی";
-  button.disabled=equipped;
+  button.textContent=equipped?"فعال است":(item.type==="effect"&&owned)?"در مجموعه":owned?"انتخاب":"بازگشایی";
+  button.disabled=equipped||(item.type==="effect"&&owned);
   button.addEventListener("click",()=>storeAction(item));
   foot.append(price,button);info.append(title,desc,foot);card.append(art,info);grid.append(card);
  });
@@ -88,7 +88,7 @@ function setMessage(t){$("#game-message").textContent=t;}
 function closeModal(){modal.hidden=true;modal.classList.remove("result-win","result-lose","achievement-view");}
 function showModal(kicker,title,description,buttons,resultType=""){modal.classList.remove("result-win","result-lose","achievement-view");if(kicker==="تالار افتخارات")modal.classList.add("achievement-view");if(resultType)modal.classList.add("result-"+resultType);$("#dialog-kicker").textContent=kicker;$("#dialog-title").textContent=title;$("#dialog-description").textContent=description;const actions=$("#dialog-actions");actions.innerHTML="";buttons.forEach(b=>{const el=document.createElement("button");el.className=b.primary?"primary-button":"secondary-button";el.textContent=b.label;el.addEventListener("click",()=>{closeModal();if(b.action)b.action();});actions.append(el);});modal.hidden=false;}
 function startGame(which){document.body.classList.remove("home-active");document.body.classList.add("game-active");$("#home-nav").classList.remove("active");$("#home-nav").removeAttribute("aria-current");mode=which;level=state.get().level;hintUses=0;updateHintButton();home.hidden=true;game.hidden=false;$("#game-kicker").textContent=which==="liquid"?"LIQUID SORT":"BLOCK PUZZLE";$("#game-title").textContent=which==="liquid"?"مرتب‌سازی رنگ":"پازل بلوکی";$("#game-level").textContent=fa(level);liquidBoard.hidden=which!=="liquid";blockWrap.hidden=which!=="blocks";score=0;moves=0;history=[];selectedTube=null;selectedPiece=null;if(which==="liquid"){liquid=LiquidEngine.makeLevel(level);renderLiquid();}else{block={board:BlockEngine.emptyBoard(),pieces:BlockEngine.newPieces()};renderBlocks();}renderHud();setMessage(which==="liquid"?"رنگ‌های یکسان را در یک لوله جمع کن.":"قطعه‌ای را انتخاب کن و در خانه‌های خالی قرار بده.");sfx("start");}
-function backHome(){document.body.classList.remove("game-active");document.body.classList.add("home-active");$("#home-nav").classList.add("active");$("#home-nav").setAttribute("aria-current","page");game.hidden=true;home.hidden=false;mode=null;closeModal();}
+function backHome(){store.hidden=true;document.body.classList.remove("game-active","store-active");document.body.classList.add("home-active");$("#store-nav").classList.remove("active");$("#home-nav").classList.add("active");$("#home-nav").setAttribute("aria-current","page");game.hidden=true;home.hidden=false;mode=null;closeModal();}
 function renderHud(){$("#score-value").textContent=fa(score);$("#moves-value").textContent=fa(moves);$("#best-value").textContent=fa(best);}
 function pushHistory(){history.push(mode==="liquid"?{mode,tubes:LiquidEngine.clone(liquid),score,moves}:{mode,board:BlockEngine.clone(block.board),pieces:block.pieces.map(p=>({...p,shape:p.shape.map(r=>r.slice())})),score,moves});if(history.length>30)history.shift();}
 function undo(){const h=history.pop();if(!h){setMessage("هنوز حرکتی برای برگشت وجود ندارد.");return;}score=h.score;moves=h.moves;if(h.mode==="liquid"){liquid=LiquidEngine.clone(h.tubes);selectedTube=null;renderLiquid();}else{block={board:BlockEngine.clone(h.board),pieces:h.pieces};selectedPiece=null;renderBlocks();}renderHud();setMessage("حرکت قبلی برگشت داده شد.");sfx("undo");}
