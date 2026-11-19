@@ -55,6 +55,7 @@ const STORE_ITEMS=[
  {id:"badge-royal",type:"badge",name:"نشان سلطنتی",tag:"ROYAL CREST",desc:"نشان اختصاصی طلایی برای پروفایل",price:140,swatch:"gold",group:"نشان‌ها"},
  {id:"badge-master",type:"badge",name:"استاد رنگ‌ها",tag:"COLOR MASTER",desc:"نشان ویژه برای استادان معما",price:240,swatch:"rose",group:"نشان‌ها"}
 ];
+const groups=["همه","تم‌ها","پوسته لوله","پوسته بلوک","نشان‌ها"];
 let storeFilter="همه";
 function openStorePreview(item,art){
  const overlay=document.createElement("div");overlay.className="store-preview-backdrop";
