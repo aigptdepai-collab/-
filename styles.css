@@ -510,10 +510,6 @@ body[data-theme="obsidian"] .store-item.is-equipped{border-color:#e2c17d}
 body[data-theme="rose"]{--purple:#d58b9c;--cyan:#e6b5a6;background:radial-gradient(ellipse at 50% 12%,#3a1d2a 0,transparent 39%),linear-gradient(180deg,#160b12,#0b0910 70%,#160d13)}
 body[data-theme="rose"] .store-feature{border-color:#d58b9c77;background:radial-gradient(ellipse at 82% 50%,#bd718044,transparent 42%),linear-gradient(115deg,#321c28,#111016 72%)}
 body[data-theme="rose"] .store-item.is-equipped{border-color:#e5a5b3}
-body[data-effect="prism"] .tube.selected{box-shadow:0 0 22px #d9c0ff99,inset 0 0 14px #fff4}
-body[data-effect="prism"] .liquid-layer{filter:saturate(1.18);box-shadow:inset 0 3px 6px #ffffff55,inset 0 -3px 6px #0002,0 0 8px #c5a5ff55}
-body[data-effect="orbit"] .game-screen .game-hud>div{box-shadow:0 0 16px #d8b66f22,inset 0 1px #fff2}
-body[data-effect="orbit"] .primary-button{box-shadow:0 8px 30px #d8b66f33,inset 0 1px #ffffff55}
 
 /* Expanded atelier inventory: tube and block cosmetics */
 .store-filters{display:flex;gap:8px;overflow-x:auto;padding:4px 1px 13px;margin:0 0 8px;scrollbar-width:none}
@@ -526,8 +522,6 @@ body[data-effect="orbit"] .primary-button{box-shadow:0 8px 30px #d8b66f33,inset 
 .art-marble .art-crystal{background:linear-gradient(135deg,#f4eee5,#a99d91 45%,#554b48)}
 .art-metal .art-crystal{background:linear-gradient(135deg,#e2e6e9,#87939c 48%,#303942)}
 .art-neon .art-crystal{background:linear-gradient(135deg,#e8d7ff,#9b61ff 48%,#24113d);box-shadow:0 0 24px #a66bff99}
-.art-pulse .art-crystal{background:linear-gradient(135deg,#fff,#d58b9c 48%,#5c263c);animation:storePulse 2s ease-in-out infinite}
-@keyframes storePulse{50%{filter:brightness(1.5);transform:scale(1.07)}}
 .tube.skin-gold{border-color:#d9b56e;background:linear-gradient(90deg,#b58b4a55,#fff4 35%,#73512555);box-shadow:inset 0 0 12px #f5dca455,0 8px 18px #0007}
 .tube.skin-obsidian{border-color:#8e806b;background:linear-gradient(90deg,#08090d,#39332c 45%,#09090d);box-shadow:inset 0 0 12px #fff2,0 8px 18px #0009}
 .tube.skin-frost{border-color:#9ad9ec;background:linear-gradient(90deg,#bdefff55,#fff8 45%,#70b9d655);box-shadow:inset 0 0 16px #a9edff55,0 0 12px #7bdcff33}
@@ -535,7 +529,6 @@ body[data-effect="orbit"] .primary-button{box-shadow:0 8px 30px #d8b66f33,inset 
 .block-cell.skin-marble.filled{background:linear-gradient(135deg,#eee5d8,#aaa092 55%,#655c57);border-color:#f5eee5;box-shadow:inset 0 2px 5px #fff9,0 0 8px #d8c8b3}
 .block-cell.skin-metal.filled{background:linear-gradient(135deg,#e0e5e8,#87949c 50%,#3b4650);border-color:#dce3e8;box-shadow:inset 0 2px 5px #fff9,0 0 8px #9caab5}
 .block-cell.skin-neon.filled{background:linear-gradient(135deg,#d9c4ff,#9959f5 55%,#32115c);border:1px solid #d8baff;box-shadow:inset 0 2px 5px #fff9,0 0 11px #a66bff99}
-body[data-effect="pulse"] .game-screen{animation:gamePulse 3s ease-in-out infinite}
 @keyframes gamePulse{50%{filter:drop-shadow(0 0 12px #c58c9b55)}}
 body[data-badge="royal"] .brand-mark,body[data-badge="master"] .brand-mark{filter:drop-shadow(0 0 10px #d8b66f99)}
 body[data-badge="royal"] .brand-mark:after{content:"✦";color:#e4c47f;position:absolute;font-size:10px;right:-5px;top:-5px}
@@ -564,12 +557,6 @@ body[data-badge="master"] .brand-mark:after{content:"✧";color:#d58b9c;position
 .art-marble.preview-block{--block-a:#e7ded2;--block-b:#93877b}
 .art-metal.preview-block{--block-a:#c2cbd1;--block-b:#65737d}
 .art-neon.preview-block{--block-a:#c59aff;--block-b:#6b31bd}
-.preview-effect .preview-object{position:relative;width:70px;height:70px;border:2px solid var(--effect-color,#c9a66a);border-radius:50%;box-shadow:0 0 12px var(--effect-color),inset 0 0 15px var(--effect-color)}
-.preview-effect .preview-object:before,.preview-effect .preview-object:after{content:"";position:absolute;inset:9px;border:1px solid var(--effect-color);border-radius:50%;transform:rotate(45deg) scaleX(.45)}
-.preview-effect .preview-object:after{transform:rotate(-45deg) scaleX(.45)}
-.art-prism.preview-effect{--effect-color:#a56bff}
-.art-orbit.preview-effect{--effect-color:#64e9ff}
-.art-pulse.preview-effect{--effect-color:#e7a5b5}
 .preview-badge .preview-object{width:62px;height:62px;border:2px solid #e5c78f;border-radius:50% 50% 46% 46%;background:linear-gradient(145deg,#8d6a35,#211a12);clip-path:polygon(50% 0,92% 20%,85% 72%,50% 100%,15% 72%,8% 20%);filter:drop-shadow(0 0 10px #d8b66f88)}
 .preview-badge .preview-object:before{content:"✦";display:grid;place-items:center;height:100%;font-size:28px;color:#ffe8ad}
 .art-rose.preview-badge .preview-object{background:linear-gradient(145deg,#bd7180,#321c28);border-color:#e9a8b4}
