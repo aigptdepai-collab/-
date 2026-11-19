@@ -622,3 +622,10 @@ body.game-active .liquid-board .tube{
 @media(max-height:700px){
   body.game-active .liquid-board .tube{height:clamp(70px,15dvh,108px)}
 }
+
+
+/* CLEAR, ACCESSIBLE HINT TARGETS */
+.hint-target{outline:2px solid #ffe28b!important;outline-offset:3px;box-shadow:0 0 0 4px #ffe28b22,0 0 22px #ffe28b99!important;animation:hintPulse .9s ease-in-out infinite alternate}
+.hint-piece{border-color:#ffe28b!important;box-shadow:0 0 0 3px #ffe28b33,0 0 20px #ffe28b88!important}
+@keyframes hintPulse{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+@media(prefers-reduced-motion:reduce){.hint-target{animation:none}}
