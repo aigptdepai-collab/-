@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "chroma-quest-state-v1";
-  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedEffect:"effect-none",equippedTubeSkin:"tube-glass",equippedBlockSkin:"block-prism",equippedBadge:"badge-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
+  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedTubeSkin:"tube-glass",equippedBlockSkin:"block-prism",equippedBadge:"badge-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
   function read(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
@@ -15,7 +15,6 @@
         selectedMode:["liquid","blocks"].includes(saved.selectedMode)?saved.selectedMode:null,
         ownedItems:Array.isArray(saved.ownedItems)?saved.ownedItems.filter(x=>typeof x==="string"):["theme-violet"],
         equippedTheme:typeof saved.equippedTheme==="string"?saved.equippedTheme:"theme-violet",
-        equippedEffect:typeof saved.equippedEffect==="string"?saved.equippedEffect:"effect-none",
         equippedTubeSkin:typeof saved.equippedTubeSkin==="string"?saved.equippedTubeSkin:"tube-glass",
         equippedBlockSkin:typeof saved.equippedBlockSkin==="string"?saved.equippedBlockSkin:"block-prism",
         equippedBadge:typeof saved.equippedBadge==="string"?saved.equippedBadge:"badge-none",
