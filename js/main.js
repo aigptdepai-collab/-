@@ -33,7 +33,7 @@ function sfx(kind){
  };
  (notes[kind]||[]).forEach(([freq,duration,when,wave,volume])=>tone(freq,duration,when,wave,volume));
 }
-function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";document.body.dataset.effect=(s.equippedEffect||"none").replace("effect-","");document.body.dataset.tubeSkin=(s.equippedTubeSkin||"tube-glass").replace("tube-","");document.body.dataset.blockSkin=(s.equippedBlockSkin||"block-prism").replace("block-","");document.body.dataset.badge=(s.equippedBadge||"badge-none").replace("badge-","");}
+function renderHeader(){const s=state.get();document.body.dataset.theme=(s.equippedTheme||"theme-violet").replace("theme-","");$("#gem-count").textContent=s.gems;const wallet=$("#store-gems");if(wallet)wallet.textContent=fa(s.gems);$("#gem-stat").textContent=fa(s.gems);$("#level-stat").textContent=fa(s.level).padStart(2,"۰");$("#sound-toggle").textContent=s.sound?"♫":"♪̸";document.body.dataset.tubeSkin=(s.equippedTubeSkin||"tube-glass").replace("tube-","");document.body.dataset.blockSkin=(s.equippedBlockSkin||"block-prism").replace("block-","");document.body.dataset.badge=(s.equippedBadge||"badge-none").replace("badge-","");}
 
 const STORE_ITEMS=[
  {id:"theme-violet",type:"theme",name:"نئونی بنفش",tag:"DEFAULT",desc:"هویت کریستالی کلاسیک CHROMA",price:0,swatch:"violet",owned:true,group:"تم‌ها"},
@@ -51,9 +51,6 @@ const STORE_ITEMS=[
  {id:"block-marble",type:"block",name:"مرمر سلطنتی",tag:"MARBLE",desc:"بافت سنگی لوکس و رگه‌های روشن",price:130,swatch:"marble",group:"پوسته بلوک"},
  {id:"block-metal",type:"block",name:"تیتانیوم",tag:"TITANIUM",desc:"سطح فلزی برس‌خورده و صنعتی",price:160,swatch:"metal",group:"پوسته بلوک"},
  {id:"block-neon",type:"block",name:"نئون شب",tag:"AFTER DARK",desc:"لبه‌های نورانی روی زمینه تیره",price:180,swatch:"neon",group:"پوسته بلوک"},
- {id:"effect-prism",type:"effect",name:"ردّ منشور",tag:"SIGNATURE EFFECT",desc:"درخشش رنگ‌ها هنگام انتقال",price:110,swatch:"prism",group:"افکت‌ها"},
- {id:"effect-orbit",type:"effect",name:"هاله پیروزی",tag:"VICTORY FX",desc:"هاله طلایی برای لحظه‌های مهم",price:160,swatch:"orbit",group:"افکت‌ها"},
- {id:"effect-pulse",type:"effect",name:"ضربان نور",tag:"PULSE FX",desc:"تپش نوری ظریف روی صفحه بازی",price:200,swatch:"pulse",group:"افکت‌ها"},
  {id:"badge-none",type:"badge",name:"بدون نشان",tag:"DEFAULT",desc:"نمای ساده و مینیمال",price:0,swatch:"violet",owned:true,group:"نشان‌ها"},
  {id:"badge-royal",type:"badge",name:"نشان سلطنتی",tag:"ROYAL CREST",desc:"نشان اختصاصی طلایی برای پروفایل",price:140,swatch:"gold",group:"نشان‌ها"},
  {id:"badge-master",type:"badge",name:"استاد رنگ‌ها",tag:"COLOR MASTER",desc:"نشان ویژه برای استادان معما",price:240,swatch:"rose",group:"نشان‌ها"}
@@ -74,11 +71,10 @@ function openStorePreview(item,art){
 function renderStore(){
  const s=state.get(),grid=$("#store-grid");if(!grid)return;
  $("#store-gems").textContent=fa(s.gems);grid.innerHTML="";
- const groups=["همه","تم‌ها","پوسته لوله","پوسته بلوک","افکت‌ها","نشان‌ها"];
  let filters=$("#store-filters");
  if(filters){filters.innerHTML="";groups.forEach(group=>{const b=document.createElement("button");b.type="button";b.className="store-filter"+(storeFilter===group?" active":"");b.textContent=group;b.addEventListener("click",()=>{storeFilter=group;renderStore();});filters.append(b);});}
  STORE_ITEMS.filter(item=>storeFilter==="همه"||item.group===storeFilter).forEach(item=>{
-  const owned=s.ownedItems.includes(item.id),key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",effect:"equippedEffect",badge:"equippedBadge"}[item.type],equipped=s[key]===item.id;
+  const owned=s.ownedItems.includes(item.id),key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",badge:"equippedBadge"}[item.type],equipped=s[key]===item.id;
   const card=document.createElement("article");card.className="store-item "+(equipped?"is-equipped":"");
   const art=document.createElement("button");art.type="button";art.className="store-item-art preview-"+item.type+" art-"+item.swatch+" art-"+item.id;art.setAttribute("aria-label","پیش‌نمایش "+item.name);
   art.innerHTML='<span class="art-orbit"></span><span class="art-crystal"></span><span class="preview-object" aria-hidden="true"></span><small>'+item.tag+'</small><b class="art-view-label">مشاهده</b>';
@@ -100,7 +96,7 @@ function storeAction(item){
   if(s.gems<item.price){showModal("کریستال کافی نیست","اعتبار کافی نداری","با حل مراحل بازی کریستال جمع کن و دوباره برگرد.",[{label:"متوجه شدم",primary:true}]);return;}
   state.update({gems:s.gems-item.price,ownedItems:[...s.ownedItems,item.id]});
  }
- const key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",effect:"equippedEffect",badge:"equippedBadge"}[item.type];
+ const key={theme:"equippedTheme",tube:"equippedTubeSkin",block:"equippedBlockSkin",badge:"equippedBadge"}[item.type];
  state.update({[key]:item.id});renderStore();renderHeader();sfx("select");
 }
 function openStore(){
