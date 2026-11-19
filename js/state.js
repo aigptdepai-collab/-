@@ -2,7 +2,7 @@
 (function(){
   "use strict";
   const STORAGE_KEY = "chroma-quest-state-v1";
-  const defaults = Object.freeze({gems:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedTubeSkin:"tube-glass",equippedBlockSkin:"block-prism",equippedBadge:"badge-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
+  const defaults = Object.freeze({gems:120,totalGemsEarned:120,level:1,sound:true,selectedMode:null,ownedItems:["theme-violet"],equippedTheme:"theme-violet",equippedTubeSkin:"tube-glass",equippedBlockSkin:"block-prism",equippedBadge:"badge-none",stats:{liquidWins:0,blockRuns:0,blockClears:0,bestBlockScore:0}});
   function read(){
     try{
       const raw=localStorage.getItem(STORAGE_KEY);
@@ -10,6 +10,7 @@
       const saved=JSON.parse(raw);
       return {
         gems:Number.isFinite(saved.gems)?Math.max(0,saved.gems):defaults.gems,
+        totalGemsEarned:Number.isFinite(saved.totalGemsEarned)?Math.max(0,saved.totalGemsEarned):(Number.isFinite(saved.gems)?Math.max(0,saved.gems):defaults.totalGemsEarned),
         level:Number.isFinite(saved.level)?Math.max(1,saved.level):defaults.level,
         sound:typeof saved.sound==="boolean"?saved.sound:defaults.sound,
         selectedMode:["liquid","blocks"].includes(saved.selectedMode)?saved.selectedMode:null,
