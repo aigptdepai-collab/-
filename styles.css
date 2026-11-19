@@ -596,3 +596,29 @@ body[data-badge="master"] .brand-mark:after{content:"✧";color:#d58b9c;position
 .achievement-progress-meta b{color:#d9bd89;font-weight:700}
 @media(prefers-reduced-motion:no-preference){.achievement-card{animation:achievementRise .35s ease both}.achievement-card:nth-child(2){animation-delay:.04s}.achievement-card:nth-child(3){animation-delay:.08s}.achievement-card:nth-child(4){animation-delay:.12s}.achievement-card:nth-child(5){animation-delay:.16s}@keyframes achievementRise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}}
 @media(max-width:380px){.achievement-view .dialog{padding:22px 14px 15px}.achievement-card{padding:10px;gap:9px}.achievement-overview{padding:12px}}
+
+
+/* LIQUID SORT — adaptive high-stage tube layout */
+body.game-active .liquid-board{
+  --tube-gap-x:clamp(5px,1.7vw,10px);
+  --tube-gap-y:clamp(7px,1.5vh,12px);
+  justify-content:center;
+  align-content:center;
+  gap:var(--tube-gap-y) var(--tube-gap-x);
+  padding:clamp(8px,1.8vw,14px);
+}
+body.game-active .liquid-board .tube{
+  flex:0 0 clamp(27px,8.3vw,43px);
+  width:clamp(27px,8.3vw,43px);
+  height:clamp(78px,17dvh,142px);
+  min-width:0;
+}
+@media(max-width:380px){
+  body.game-active .liquid-board .tube{
+    flex-basis:clamp(25px,8vw,30px);
+    width:clamp(25px,8vw,30px);
+  }
+}
+@media(max-height:700px){
+  body.game-active .liquid-board .tube{height:clamp(70px,15dvh,108px)}
+}
