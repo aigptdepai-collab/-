@@ -101,12 +101,14 @@ function storeAction(item){
  state.update({[key]:item.id});renderStore();renderHeader();sfx("select");
 }
 function openStore(){
+ closeModal();
  document.body.classList.remove("game-active");document.body.classList.add("home-active","store-active");
  home.hidden=true;game.hidden=true;store.hidden=false;
  $("#home-nav").classList.remove("active");$("#home-nav").removeAttribute("aria-current");
  $("#store-nav").classList.add("active");renderStore();window.scrollTo({top:0,behavior:"smooth"});
 }
 function closeStore(){
+ closeModal();
  store.hidden=true;home.hidden=false;document.body.classList.remove("store-active");
  $("#store-nav").classList.remove("active");$("#home-nav").classList.add("active");$("#home-nav").setAttribute("aria-current","page");
  window.scrollTo({top:0,behavior:"smooth"});
