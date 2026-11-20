@@ -41,7 +41,7 @@ function reverseScramble(colorCount,level,emptyCount){
  const first=rand(0,colorCount-1),split=rand(1,3);
  for(let i=0;i<split;i++)tubes[first+0].pop();
  tubes[colorCount].push(...Array(split).fill(first));
- const extra=Math.min(320,Math.round(18+colorCount*5.5+Math.min(level,250)*1.15));
+ const extra=Math.min(520,Math.round(28+colorCount*7.5+Math.min(level,250)*1.65+Math.sqrt(level)*5));
  for(let step=0;step<extra;step++){
   const sources=[];
   for(let i=0;i<tubes.length;i++)if(tubes[i].length>=2)sources.push(i);
@@ -105,16 +105,21 @@ function reverseScramble(colorCount,level,emptyCount){
  return tubes;
 }
 
+function hasReservoir(level){
+ const n=Math.max(1,Math.floor(Number(level)||1));
+ return n>=11&&((n-11)%4===0);
+}
 function makeLevel(level){
- const n=Math.max(1,Number(level)||1);
+ const n=Math.max(1,Math.floor(Number(level)||1));
  const count=tubeCountForLevel(n)-2;
- /* Two empty tubes in the opening levels, then one empty tube for a sustained challenge. */
- const emptyCount=n<=6?2:1;
+ /* Early levels get two buffers; later levels get one. On marked challenge
+    stages that final buffer is presented as a special transfer reservoir. */
+ const emptyCount=n<=5?2:1;
  return reverseScramble(count,n,emptyCount);
 }
 function topRun(t){if(!t.length)return 0;let n=1;for(let i=t.length-2;i>=0&&t[i]===t[t.length-1];i--)n++;return n;}
 function canPour(t,from,to){if(from===to||!t[from]||!t[to])return false;const a=t[from],b=t[to];if(!a.length||b.length>=4)return false;return !b.length||b[b.length-1]===a[a.length-1];}
 function pour(t,from,to){if(!canPour(t,from,to))return null;const next=clone(t),a=next[from],b=next[to],color=a[a.length-1],amount=Math.min(topRun(a),4-b.length);for(let i=0;i<amount;i++)b.push(a.pop());return{tubes:next,amount,color};}
 function won(t){return t.every(x=>x.length===0||(x.length===4&&x.every(c=>c===x[0])));}
-window.LiquidEngine={COLORS,makeLevel,clone,canPour,pour,won,topRun,tubeCountForLevel};
+window.LiquidEngine={COLORS,makeLevel,clone,canPour,pour,won,topRun,tubeCountForLevel,hasReservoir};
 })();
