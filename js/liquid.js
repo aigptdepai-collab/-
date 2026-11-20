@@ -80,7 +80,7 @@ function hasReservoir(level){
 function makeLevel(level){
  const n=Math.max(1,Math.floor(Number(level)||1));
  const challenge=n>30;
- const count=tubeCountForLevel(n)-(challenge?1:2);
+ const count=Math.min(COLORS.length,tubeCountForLevel(n)-(challenge?1:2));
  /* Levels 1–5: two ordinary buffers; 6–30: one; 31+: one special reservoir. */
  const emptyCount=n<=5?2:1;
  return reverseScramble(count,n,emptyCount);
