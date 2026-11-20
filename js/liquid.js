@@ -75,7 +75,7 @@ function reverseScramble(colorCount,level,emptyCount){
 
 function hasReservoir(level){
  const n=Math.max(1,Math.floor(Number(level)||1));
- return n>=11&&((n-11)%4===0);
+ return n>30;
 }
 function makeLevel(level){
  const n=Math.max(1,Math.floor(Number(level)||1));
