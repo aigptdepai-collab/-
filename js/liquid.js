@@ -63,14 +63,8 @@ function reverseScramble(colorCount,level,emptyCount){
   lastKey=m.key;
   made++;
  }
- /* A safe, solvable minimum scramble if random choices produced too few moves. */
- if(made<Math.max(8,colorCount*2)&&colorCount>=2){
-  for(let i=0;i<colorCount;i++)tubes[i]=[i,i,i,i];
-  for(let i=0;i<Math.min(3,level%4+1);i++){
-   tubes[0].pop();
-   tubes[1].push(0);
-  }
- }
+ /* Reverse moves preserve a guaranteed solution path, even when the board
+    is less scrambled than the target difficulty. */
  /* Keep the one and only empty slot at the end for reservoir rendering. */
  const emptyIndex=tubes.findIndex(t=>t.length===0);
  if(emptyIndex>=0&&emptyIndex!==tubes.length-1){
