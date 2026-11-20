@@ -34,24 +34,22 @@ function tubeCountForLevel(level){
    reachable from a solved board by legal pours (the solution is the
    reverse of this construction). The final consolidation restores exactly
    two empty tubes. */
-function reverseScramble(colorCount,level){
+function reverseScramble(colorCount,level,emptyCount){
  const tubes=[];
  for(let c=0;c<colorCount;c++)tubes.push([c,c,c,c]);
- tubes.push([],[]);
+ for(let i=0;i<emptyCount;i++)tubes.push([]);
  const first=rand(0,colorCount-1),split=rand(1,3);
  for(let i=0;i<split;i++)tubes[first+0].pop();
  tubes[colorCount].push(...Array(split).fill(first));
- const initialSplitBoard=clone(tubes);
-
- const extra=Math.min(260,Math.round(8+colorCount*3.2+Math.min(level,220)*0.72));
+ const extra=Math.min(320,Math.round(18+colorCount*5.5+Math.min(level,250)*1.15));
  for(let step=0;step<extra;step++){
   const sources=[];
-  for(let i=0;i<colorCount+2;i++)if(tubes[i].length>=2)sources.push(i);
+  for(let i=0;i<tubes.length;i++)if(tubes[i].length>=2)sources.push(i);
   const moves=[];
   for(const from of sources){
    const color=tubes[from][tubes[from].length-1];
    let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
-   for(let to=0;to<colorCount+2;to++){
+   for(let to=0;to<tubes.length;to++){
     if(to===from||!tubes[to].length||tubes[to].length>=4||tubes[to].at(-1)===color)continue;
     const cap=Math.min(run,tubes[to].length?4-tubes[to].length:4,tubes[from].length-1);
     if(cap>0)moves.push({from,to,color,cap,contrast:tubes[to][tubes[to].length-1]!==color});
@@ -68,16 +66,16 @@ function reverseScramble(colorCount,level){
     create room by moving a top run while keeping its source non-empty. */
  let finish=null;
  for(let attempt=0;attempt<colorCount*3&&!finish;attempt++){
-  for(let from=0;from<colorCount+2&&!finish;from++){
+  for(let from=0;from<tubes.length&&!finish;from++){
    const a=tubes[from];
    if(!a.length||a.length>4||!a.every(x=>x===a[0]))continue;
-   for(let to=0;to<colorCount+2;to++){
+   for(let to=0;to<tubes.length;to++){
     if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4){finish={from,to};break;}
    }
   }
   if(finish)break;
   const donors=[];
-  for(let from=0;from<colorCount+2;from++){
+  for(let from=0;from<tubes.length;from++){
    if(tubes[from].length<2)continue;
    const color=tubes[from].at(-1);
    let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
@@ -102,15 +100,17 @@ function reverseScramble(colorCount,level){
   for(let color=0;color<colorCount;color++)tubes.push([color,color,color,color]);
   tubes[0]=[0,0,0,1];
   tubes[1]=[1,1,1,0];
-  tubes.push([],[]);
+  for(let i=0;i<emptyCount;i++)tubes.push([]);
  }
  return tubes;
 }
 
 function makeLevel(level){
- const totalTubes=tubeCountForLevel(level);
- const count=totalTubes-2;
- return reverseScramble(count,Math.max(1,Number(level)||1));
+ const n=Math.max(1,Number(level)||1);
+ const count=tubeCountForLevel(n)-2;
+ /* Two empty tubes in the opening levels, then one empty tube for a sustained challenge. */
+ const emptyCount=n<=6?2:1;
+ return reverseScramble(count,n,emptyCount);
 }
 function topRun(t){if(!t.length)return 0;let n=1;for(let i=t.length-2;i>=0&&t[i]===t[t.length-1];i--)n++;return n;}
 function canPour(t,from,to){if(from===to||!t[from]||!t[to])return false;const a=t[from],b=t[to];if(!a.length||b.length>=4)return false;return !b.length||b[b.length-1]===a[a.length-1];}
