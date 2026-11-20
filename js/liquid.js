@@ -30,81 +30,51 @@ function tubeCountForLevel(level){
  return Math.min(24,21+Math.floor((n-200)/50));
 }
 
-/* Reverse-scramble a solved board. Every generated state is therefore
-   reachable from a solved board by legal pours (the solution is the
-   reverse of this construction). The final consolidation restores exactly
-   two empty tubes. */
+/* Reverse-scramble a solved board. On challenge stages the final
+   empty slot is the special reservoir; never create a second empty tube.
+   Each reverse move is the exact inverse of a legal forward pour. */
 function reverseScramble(colorCount,level,emptyCount){
  const tubes=[];
- for(let c=0;c<colorCount;c++)tubes.push([c,c,c,c]);
+ for(let color=0;color<colorCount;color++)tubes.push([color,color,color,color]);
  for(let i=0;i<emptyCount;i++)tubes.push([]);
- const first=rand(0,colorCount-1),split=rand(1,3);
- for(let i=0;i<split;i++)tubes[first+0].pop();
- tubes[colorCount].push(...Array(split).fill(first));
- const extra=Math.min(520,Math.round(28+colorCount*7.5+Math.min(level,250)*1.65+Math.sqrt(level)*5));
+ const extra=Math.min(900,Math.round(42+colorCount*11+Math.min(level,300)*2.7+Math.sqrt(level)*9));
+ let made=0,lastKey="";
  for(let step=0;step<extra;step++){
-  const sources=[];
-  for(let i=0;i<tubes.length;i++)if(tubes[i].length>=2)sources.push(i);
   const moves=[];
-  for(const from of sources){
-   const color=tubes[from][tubes[from].length-1];
-   let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
-   for(let to=0;to<tubes.length;to++){
-    if(to===from||!tubes[to].length||tubes[to].length>=4||tubes[to].at(-1)===color)continue;
-    const cap=Math.min(run,tubes[to].length?4-tubes[to].length:4,tubes[from].length-1);
-    if(cap>0)moves.push({from,to,color,cap,contrast:tubes[to][tubes[to].length-1]!==color});
-   }
-  }
-  if(!moves.length)break;
-  const pool=moves;
-  const move=pool[rand(0,pool.length-1)];
-  const amount=rand(1,move.cap);
-  for(let k=0;k<amount;k++)tubes[move.to].push(tubes[move.from].pop());
- }
-
- /* Find a monochrome tube that can be emptied into another tube. If needed,
-    create room by moving a top run while keeping its source non-empty. */
- let finish=null;
- for(let attempt=0;attempt<colorCount*3&&!finish;attempt++){
-  for(let from=0;from<tubes.length&&!finish;from++){
+  for(let from=0;from<colorCount;from++){
    const a=tubes[from];
-   if(!a.length||a.length>4||!a.every(x=>x===a[0]))continue;
+   if(a.length<2)continue;
+   const color=a[a.length-1];
+   let run=1;
+   for(let k=a.length-2;k>=0&&a[k]===color;k--)run++;
    for(let to=0;to<tubes.length;to++){
-    if(to!==from&&tubes[to].length>0&&tubes[to].length+a.length<=4){finish={from,to};break;}
-   }
-  }
-  if(finish)break;
-  const donors=[];
-  for(let from=0;from<tubes.length;from++){
-   if(tubes[from].length<2)continue;
-   const color=tubes[from].at(-1);
-   let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
-   for(let to=0;to<tubes.length;to++){
-    if(to!==from&&tubes[to].length>0&&tubes[to].length<4&&tubes[to].at(-1)!==color){
-     const amount=Math.min(run,tubes[from].length-1,4-tubes[to].length);
-     if(amount>0)donors.push({from,to,amount});
+    if(to===from||!tubes[to].length||tubes[to].length>=4||tubes[to][tubes[to].length-1]===color)continue;
+    const amount=Math.min(run,a.length-1,4-tubes[to].length);
+    if(amount>0){
+     const key=from+":"+to+":"+color;
+     if(key!==lastKey)moves.push({from,to,color,amount,key});
     }
    }
   }
-  if(!donors.length)break;
-  const m=donors[rand(0,donors.length-1)];
-  for(let k=0;k<m.amount;k++)tubes[m.to].push(tubes[m.from].pop());
+  if(!moves.length)break;
+  const m=moves[rand(0,moves.length-1)];
+  const amount=rand(1,m.amount);
+  for(let k=0;k<amount;k++)tubes[m.to].push(tubes[m.from].pop());
+  lastKey=m.key;
+  made++;
  }
- if(finish){
-  const {from,to}=finish;
-  while(tubes[from].length)tubes[to].push(tubes[from].pop());
-  /* Keep the sole empty slot in the final position so challenge stages can
-     render it as the transfer reservoir rather than a normal tube. */
-  const emptyIndex=tubes.findIndex(t=>t.length===0);
-  if(emptyIndex>=0&&emptyIndex!==tubes.length-1)[tubes[emptyIndex],tubes[tubes.length-1]]=[tubes[tubes.length-1],tubes[emptyIndex]];
- }else{
-  /* Guaranteed fallback: a small, solvable two-color arrangement with
-     exactly two empty tubes, rather than an already-completed board. */
-  tubes.length=0;
-  for(let color=0;color<colorCount;color++)tubes.push([color,color,color,color]);
-  tubes[0]=[0,0,0,1];
-  tubes[1]=[1,1,1,0];
-  for(let i=0;i<emptyCount;i++)tubes.push([]);
+ /* A safe, solvable minimum scramble if random choices produced too few moves. */
+ if(made<Math.max(8,colorCount*2)&&colorCount>=2){
+  for(let i=0;i<colorCount;i++)tubes[i]=[i,i,i,i];
+  for(let i=0;i<Math.min(3,level%4+1);i++){
+   tubes[0].pop();
+   tubes[1].push(0);
+  }
+ }
+ /* Keep the one and only empty slot at the end for reservoir rendering. */
+ const emptyIndex=tubes.findIndex(t=>t.length===0);
+ if(emptyIndex>=0&&emptyIndex!==tubes.length-1){
+  [tubes[emptyIndex],tubes[tubes.length-1]]=[tubes[tubes.length-1],tubes[emptyIndex]];
  }
  return tubes;
 }
@@ -115,9 +85,9 @@ function hasReservoir(level){
 }
 function makeLevel(level){
  const n=Math.max(1,Math.floor(Number(level)||1));
- const count=tubeCountForLevel(n)-2;
- /* Early levels get two buffers; later levels get one. On marked challenge
-    stages that final buffer is presented as a special transfer reservoir. */
+ const challenge=n>30;
+ const count=tubeCountForLevel(n)-(challenge?1:2);
+ /* Levels 1–5: two ordinary buffers; 6–30: one; 31+: one special reservoir. */
  const emptyCount=n<=5?2:1;
  return reverseScramble(count,n,emptyCount);
 }
