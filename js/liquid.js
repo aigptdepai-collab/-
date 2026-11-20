@@ -93,6 +93,10 @@ function reverseScramble(colorCount,level,emptyCount){
  if(finish){
   const {from,to}=finish;
   while(tubes[from].length)tubes[to].push(tubes[from].pop());
+  /* Keep the sole empty slot in the final position so challenge stages can
+     render it as the transfer reservoir rather than a normal tube. */
+  const emptyIndex=tubes.findIndex(t=>t.length===0);
+  if(emptyIndex>=0&&emptyIndex!==tubes.length-1)[tubes[emptyIndex],tubes[tubes.length-1]]=[tubes[tubes.length-1],tubes[emptyIndex]];
  }else{
   /* Guaranteed fallback: a small, solvable two-color arrangement with
      exactly two empty tubes, rather than an already-completed board. */
