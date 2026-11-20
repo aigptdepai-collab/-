@@ -79,7 +79,7 @@ function reverseScramble(colorCount,level,emptyCount){
    if(tubes[from].length<2)continue;
    const color=tubes[from].at(-1);
    let run=1;for(let k=tubes[from].length-2;k>=0&&tubes[from][k]===color;k--)run++;
-   for(let to=0;to<colorCount+2;to++){
+   for(let to=0;to<tubes.length;to++){
     if(to!==from&&tubes[to].length>0&&tubes[to].length<4&&tubes[to].at(-1)!==color){
      const amount=Math.min(run,tubes[from].length-1,4-tubes[to].length);
      if(amount>0)donors.push({from,to,amount});
